@@ -31,4 +31,4 @@ server "securitx.localhost" {
 }
 ```
 
-The src/Form/MemberForm.php document requires reCaptcha keys.
+The src/Form/MemberForm.php document requires reCAPTCHA keys.
