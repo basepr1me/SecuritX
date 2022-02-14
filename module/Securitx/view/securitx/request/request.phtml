@@ -1,0 +1,117 @@
+<?php
+$this->headTitle('Request');
+?>
+<div class="jumbotron">
+<?php
+	if ($registered) {
+?>
+	<h1 class="display-4">Request completed</h1>
+	<p>Thanks you for requesting an account for <?= $company ?>, <?= $first ?>.<br />
+	Check your email to validate your request.<br />
+	The link will expire in 24 hours.</p>
+<?php
+		goto done;
+	}
+?>
+	<h1 class="display-4">Request an account</h1>
+
+	<p>Please fill out and submit the request form below. You will receive a validation email to activate your account.</p>
+
+	<hr class="my-4">
+<?php
+	$co_opts = array();
+	foreach ($companies as $company) {
+		$co_opt = [
+			'value' => $company->company_id,
+			'label' => $this->escapeHtml($company->name),
+		];
+		array_push($co_opts, $co_opt);
+	}
+	$first = $form->get('first');
+	$first->setAttribute('class', 'form-control');
+	$first->setAttribute('placeholder', 'First Name');
+
+	$last = $form->get('last');
+	$last->setAttribute('class', 'form-control');
+	$last->setAttribute('placeholder', 'Last Name');
+
+	$office = $form->get('office');
+	$office->setAttribute('class', 'form-control');
+	$office->setAttribute('placeholder', 'Office Name');
+
+	$email = $form->get('email');
+	$email->setAttribute('class', 'form-control');
+	$email->setAttribute('placeholder', 'Email Address');
+
+	$captcha = $form->get('captcha');
+	$captcha->setAttribute('class', 'form-control');
+	$captcha->setAttribute('placeholder', 'Are you human?');
+
+	$company_id = $form->get('company_id');
+	$company_id->setAttribute('class', 'form-control');
+	$company_id->setAttribute('placeholder', 'Select Company');
+	$company_id->setValueOptions($co_opts);
+
+	$submit = $form->get('submit');
+	$submit->setAttribute('class', 'btn btn-primary');
+
+
+	$form->setAttribute('action', $this->url('securitx',
+	    ['action' => 'request']));
+	$form->prepare();
+
+	echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+	<?= $this->formLabel($first) ?>
+	<?= $this->formElement($first) ?>
+	<?= $this->formElementErrors()->render($first,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($last) ?>
+	<?= $this->formElement($last) ?>
+	<?= $this->formElementErrors()->render($last,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($office) ?>
+	<?= $this->formElement($office) ?>
+	<?= $this->formElementErrors()->render($office,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($email) ?>
+	<?= $this->formElement($email) ?>
+	<?= $this->formElementErrors()->render($email,
+	    ['class' => 'help-block']) ?>
+<?php
+	if ($exists) {
+?>
+	<p style="color: red">An email with that company selection already exists. Please change the email address or pick a different company.</p>
+<?php
+	} else {
+?>
+	<p style="color: red"><?= $valid ?></p>
+<?php
+	}
+?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($company_id) ?>
+	<?= $this->formElement($company_id) ?>
+	<?= $this->formElementErrors()->render($company_id,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<?= $this->formElement($captcha) ?>
+	<?= $this->formElementErrors()->render($captcha,
+	    ['class' => 'help-block']) ?>
+	</div>
+<?php
+	echo $this->formSubmit($form->get('submit'));
+	echo $this->formHidden($form->get('id'));
+	echo $this->form()->closeTag();
+done:
+?>
+</div>
