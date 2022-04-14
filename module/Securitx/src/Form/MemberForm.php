@@ -6,23 +6,72 @@ use Laminas\Form\Form;
 use Laminas\Form\Element;
 
 class MemberForm extends Form {
-	public function __construct($name = null) {
+	public function __construct($name) {
 		parent::__construct($name);
 
-		$this->add([
-			'name' => 'captcha',
-			'type' => 'Captcha',
-			'options' => [
-				'captcha' => new Captcha\ReCaptcha([
-					'site_key' => '********',
-					'secret_key' => '********',
-				]),
-			],
-		]);
-		$this->add([
-			'name' => 'id',
-			'type' => 'hidden',
-		]);
+		if ($name == 'admin') {
+			$this->add([
+				'name' => 'is_admin',
+				'type' => 'hidden',
+				'attributes' => [
+					'value' => '1',
+				],
+			]);
+			$this->add([
+				'name' => 'is_editor',
+				'type' => 'hidden',
+				'attributes' => [
+					'value' => '1',
+				],
+			]);
+			$this->add([
+				'name' => 'setup',
+				'type' => 'hidden',
+				'attributes' => [
+					'value' => '1',
+				],
+			]);
+		} else {
+			$this->add([
+				'name' => 'is_admin',
+				'type' => 'hidden',
+				'attributes' => [
+					'value' => '0',
+				],
+			]);
+			$this->add([
+				'name' => 'is_editor',
+				'type' => 'hidden',
+				'attributes' => [
+					'value' => '0',
+				],
+			]);
+			$this->add([
+				'name' => 'setup',
+				'type' => 'hidden',
+				'attributes' => [
+					'value' => '0',
+				],
+			]);
+			$this->add([
+				'name' => 'captcha',
+				'type' => 'Captcha',
+				'options' => [
+					'captcha' => new Captcha\ReCaptcha([
+						'site_key' => '********',
+						'secret_key' => '********',
+					]),
+				],
+			]);
+			$this->add([
+				'name' => 'company_id',
+				'type' => 'select',
+				'options' => [
+					'label' => 'Select Company',
+					'disable_inarray_validator' => true,
+				],
+			]);
+		}
 		$this->add([
 			'name' => 'first',
 			'type' => 'text',
@@ -52,14 +101,6 @@ class MemberForm extends Form {
 			],
 			'attributes' => [
 				'multiple' => false,
-			],
-		]);
-		$this->add([
-			'name' => 'company_id',
-			'type' => 'select',
-			'options' => [
-				'label' => 'Select Company',
-				'disable_inarray_validator' => true,
 			],
 		]);
 		$this->add([

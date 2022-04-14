@@ -45,6 +45,7 @@ class Module implements ConfigProviderInterface {
 					return new Controller\SecuritxController(
 						$container->get(Model\MemberTable::class),
 						$container->get(Model\CompanyTable::class),
+						$container->get('config')['email_host'],
 					);
 				},
 			],

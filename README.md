@@ -29,6 +29,13 @@ server "securitx.localhost" {
 		request rewrite "/index.php"
 	}
 }
+
+cp -p /bin/sh /var/www/bin
 ```
 
+make pretty later:
+
+installation instructions
+upgrade instructions
+edit emailhost in config/autoload/global.php
 The src/Form/MemberForm.php document requires reCAPTCHA keys.

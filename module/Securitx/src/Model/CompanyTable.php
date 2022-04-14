@@ -13,6 +13,9 @@ class CompanyTable {
 	public function fetchAll() {
 		return $this->tableGateway->select();
 	}
+	public function getCount() {
+		return $this->tableGateway->select()->count();
+	}
 	public function getCompany($id) {
 		$id = (int)$id;
 		$rowset = $this->tableGateway->select(['company_id' => $id]);
@@ -22,5 +25,26 @@ class CompanyTable {
 			    'Could not find company row with id %d', $id));
 		}
 		return $row;
+	}
+	public function saveCompany(Company $company) {
+		$data = [
+			'name' => $company->name,
+			'short' => $company->short,
+			'domain' => $company->domain,
+		];
+
+		$id = (int)$company->company_id;
+		if ($id === 0) {
+			$this->tableGateway->insert($data);
+			return;
+		}
+
+		try {
+			$this->getMember($id);
+		} catch (RuntimeException $e) {
+			return;
+		}
+
+		$this->tableGateway->update($data, ['id' => $id]);
 	}
 }

@@ -13,6 +13,13 @@
  */
 
 return [
+	/* edit this */
+	'email_host' => [
+		'hostname'	=> 'securitx.localhost',
+		'ip'		=> '127.0.0.1',
+	],
+
+	/* do not edit beyond this point */
 	'db' => [
 		'driver'	=> 'Pdo_Sqlite',
 		'dsn'		=> sprintf('sqlite:%s/data/securitx.db', realpath(getcwd())),

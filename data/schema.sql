@@ -8,15 +8,21 @@ CREATE TABLE members (
 	u_key UUID,
 	verified INTEGER NOT NULL,
 	moddate NUMERIC NOT NULL,
-	company_id INTEGER NOT NULL
+	company_id INTEGER NOT NULL,
+	is_admin INTEGER NOT NULL,
+	is_editor INTEGER NOT NULL,
+	inviter TEXT
 );
 
 CREATE TABLE companies (
 	company_id INTEGER PRIMARY KEY AUTOINCREMENT,
 	name TEXT NOT NULL,
-	short TEXT NOT NULL
+	short TEXT NOT NULL,
+	domain TEXT NOT NULL
 );
 
-INSERT INTO companies (name, short) VALUES ('Cool Company', 'CC');
-INSERT INTO companies (name, short) VALUES ('Radical Job', 'RJ');
-INSERT INTO companies (name, short) VALUES ('Gnarly Career', 'GC');
+CREATE TABLE downloads (
+	downloads_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	id_key UUID,
+	u_key UUID
+);

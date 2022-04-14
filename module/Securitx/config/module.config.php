@@ -49,6 +49,7 @@ return [
             		'securitx/securitx/verify'	=> __DIR__ . '/../view/securitx/verify/verify.phtml',
             		'securitx/securitx/upload'	=> __DIR__ . '/../view/securitx/upload/upload.phtml',
             		'securitx/securitx/thanks'	=> __DIR__ . '/../view/securitx/thanks/thanks.phtml',
+            		'securitx/securitx/home'	=> __DIR__ . '/../view/securitx/home/home.phtml',
 		],
 		'template_path_stack' => [
 			__DIR__ . '/../view/securitx',

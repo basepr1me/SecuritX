@@ -6,12 +6,19 @@ use Laminas\Mail\Transport\Smtp as SmtpTransport;
 use Laminas\Mail\Transport\SmtpOptions;
 
 class Emailer {
+	private $hostname, $ip;
+
+	public function __construct($email_host) {
+		$this->hostname = $email_host['hostname'];
+		$this->ip = $email_host['ip'];
+	}
+
 	public function sendVerifyEmail($email, $first, $last, $id, $url) {
 		$message = new Message();
 		$message->addFrom('no-reply@visnet.us', 'SecuritX');
 		$message->addTo("$email", "$first $last");
 		$message->addReplyTo('no-reply@visnet.us', 'SecuritX');
-		$message->setSubject('SecuritX Verification Link');
+		$message->setSubject('Your SecuritX Verification Link');
 		$message->setBody(
 			"Hello $first,\r\n\r\nPlease visit the following " .
 			"url to confirm your member request. The link will " .
@@ -20,8 +27,8 @@ class Emailer {
 
 		$transport = new SmtpTransport();
 		$options = new SmtpOptions([
-			'name' => 'thelma',
-			'host' => '192.168.0.254',
+			'name' => $this->hostname,
+			'host' => $this->ip,
 		]);
 		$transport->setOptions($options);
 		$transport->send($message);
@@ -32,11 +39,11 @@ class Emailer {
 		$message->addFrom('no-reply@visnet.us', 'SecuritX');
 		$message->addTo("$email", "$first $last");
 		$message->addReplyTo('no-reply@visnet.us', 'SecuritX');
-		$message->setSubject('SecuritX Uploader Link');
+		$message->setSubject('Your Private SecuritX Link');
 		$message->setBody(
 			"Hello $first,\r\n\r\nThe following link is your " .
-			"direct access link to upload protected health " .
-			"documents to $company. Do not lose or share this " .
+			"direct access link to send and receive protected health " .
+			"documents for $company. Do not lose or share this " .
 			"link with anyone.\r\n\r\nIf this link is not used ".
 			"for thirty days, it will be removed. Thank you!" .
 			"\r\n\r\n$url"
@@ -44,8 +51,8 @@ class Emailer {
 
 		$transport = new SmtpTransport();
 		$options = new SmtpOptions([
-			'name' => 'thelma',
-			'host' => '192.168.0.254',
+			'name' => $this->hostname,
+			'host' => $this->ip,
 		]);
 		$transport->setOptions($options);
 		$transport->send($message);

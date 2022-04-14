@@ -1,5 +1,5 @@
 <?php
-$this->headTitle('Request');
+$this->headTitle('SecuritX: Request');
 ?>
 <div class="jumbotron">
 <?php
@@ -109,8 +109,10 @@ $this->headTitle('Request');
 	    ['class' => 'help-block']) ?>
 	</div>
 <?php
+	echo $this->formHidden($form->get('is_admin'));
+	echo $this->formHidden($form->get('is_editor'));
+	echo $this->formHidden($form->get('setup'));
 	echo $this->formSubmit($form->get('submit'));
-	echo $this->formHidden($form->get('id'));
 	echo $this->form()->closeTag();
 done:
 ?>

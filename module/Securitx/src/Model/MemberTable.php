@@ -22,6 +22,11 @@ class MemberTable {
 		$row = $rowset->current();
 		return $row;
 	}
+	public function getAnyAdmin() {
+		$rowset = $this->tableGateway->select(['is_admin' => 1]);
+		$row = $rowset->current();
+		return $row;
+	}
 	public function getUvMember($id) {
 		$rowset = $this->tableGateway->select(['v_key' => $id]);
 		$row = $rowset->current();
@@ -48,6 +53,8 @@ class MemberTable {
 			'u_key' => $member->u_key,
 			'verified' => $member->verified,
 			'moddate' => time(),
+			'is_admin' => $member->is_admin,
+			'is_editor' => $member->is_editor,
 			'company_id' => intval($member->company_id),
 		];
 

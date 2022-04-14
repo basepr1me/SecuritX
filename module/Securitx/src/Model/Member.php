@@ -20,6 +20,8 @@ class Member implements InputFilterAwareInterface {
 	public $u_key;
 	public $verified;
 	public $moddate;
+	public $is_admin;
+	public $is_editor;
 	public $company_id;
 
 	private $inputFilter;
@@ -34,6 +36,8 @@ class Member implements InputFilterAwareInterface {
 		$this->u_key	= !empty($data['u_key']) ? $data['u_key'] : null;
 		$this->verified	= !empty($data['verified']) ? $data['verified'] : null;
 		$this->moddate	= !empty($data['moddate']) ? $data['moddate'] : null;
+		$this->is_admin = !empty($data['is_admin']) ? $data['is_admin'] : null;
+		$this->is_editor = !empty($data['is_editor']) ? $data['is_editor'] : null;
 		$this->company_id	= !empty($data['company_id']) ? $data['company_id'] : null;
 	}
 
@@ -50,14 +54,6 @@ class Member implements InputFilterAwareInterface {
 		}
 
 		$inputFilter = new InputFilter();
-
-		$inputFilter->add([
-			'name' => 'id',
-			'required' => true,
-			'filters' => [
-				['name' => ToInt::class],
-			],
-		]);
 
 		$inputFilter->add([
 			'name' => 'first',

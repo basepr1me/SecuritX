@@ -1,12 +1,135 @@
 <?php
-	$this->headTitle('Home');
+	$this->headTitle('SecuritX: Welcome');
 ?>
 <div class="jumbotron">
 	<h1 class="display-4">Welcome to SecuritX</h1>
 
 	<p>Congratulations! You've reached SecuritX, the secure protected-health document uploader.</p>
 
+<?php	if (!$db) { ?>
+	<p>SQlite database creation failed. Is the data folder writable?</p>
+<?php	return; } ?>
+<?php	if (!$company) { ?>
+	<p>Before you can begin, some things need to be setup.
+	<br />Please set up the administrator account's company.</p>
+<?php	} else if ($company && $exists && !$member) { ?>
+	<p>Please set up the administrator account.</p>
+<?php	} else if ($company && $exists && $member && !$verified) { ?>
+	<p>Before the site becomes available, the new administrator account must be verified.
+	<br />Please click the link in the verification email.</p>
+<?php	return; } ?>
 	<hr class="my-4">
+<?php	if (!$company) {
+		$name = $form->get('name');
+		$name->setAttribute('class', 'form-control');
+		$name->setAttribute('placeholder', 'Company Name');
 
+		$short = $form->get('short');
+		$short->setAttribute('class', 'form-control');
+		$short->setAttribute('placeholder', 'Short Name');
+
+		$domain = $form->get('domain');
+		$domain->setAttribute('class', 'form-control');
+		$domain->setAttribute('placeholder', 'Email Domain');
+
+		$submit = $form->get('submit');
+		$submit->setAttribute('class', 'btn btn-primary');
+
+
+		$form->setAttribute('action', $this->url('securitx',
+		    ['action' => 'index']));
+		$form->prepare();
+
+		echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+	<?= $this->formLabel($name) ?>
+	<?= $this->formElement($name) ?>
+	<?= $this->formElementErrors()->render($name,
+	    ['class' => 'help-block']) ?>
+	</div>
+
+	<div class="form-group">
+	<?= $this->formLabel($short) ?>
+	<?= $this->formElement($short) ?>
+	<?= $this->formElementErrors()->render($short,
+	    ['class' => 'help-block']) ?>
+	</div>
+
+	<div class="form-group">
+	<?= $this->formLabel($domain) ?>
+	<?= $this->formElement($domain) ?>
+	<?= $this->formElementErrors()->render($domain,
+	    ['class' => 'help-block']) ?>
+	<p style="color: red"><?= $valid ?></p>
+	</div>
+
+<?php
+		echo $this->formSubmit($form->get('submit'));
+		echo $this->form()->closeTag();
+		return;
+	}
+	if (!$member) {
+		$first = $form->get('first');
+		$first->setAttribute('class', 'form-control');
+		$first->setAttribute('placeholder', 'First Name');
+
+		$last = $form->get('last');
+		$last->setAttribute('class', 'form-control');
+		$last->setAttribute('placeholder', 'Last Name');
+
+		$office = $form->get('office');
+		$office->setAttribute('class', 'form-control');
+		$office->setAttribute('placeholder', 'Office Name');
+
+		$email = $form->get('email');
+		$email->setAttribute('class', 'form-control');
+		$email->setAttribute('placeholder', 'Email Address');
+
+		$submit = $form->get('submit');
+		$submit->setAttribute('class', 'btn btn-primary');
+
+
+		$form->setAttribute('action', $this->url('securitx',
+		    ['action' => 'index']));
+		$form->prepare();
+
+		echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+	<?= $this->formLabel($first) ?>
+	<?= $this->formElement($first) ?>
+	<?= $this->formElementErrors()->render($first,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($last) ?>
+	<?= $this->formElement($last) ?>
+	<?= $this->formElementErrors()->render($last,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($office) ?>
+	<?= $this->formElement($office) ?>
+	<?= $this->formElementErrors()->render($office,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($email) ?>
+	<?= $this->formElement($email) ?>
+	<?= $this->formElementErrors()->render($email,
+	    ['class' => 'help-block']) ?>
+	<p style="color: red"><?= $valid ?></p>
+
+	</div>
+<?php
+		echo $this->formHidden($form->get('is_admin'));
+		echo $this->formHidden($form->get('is_editor'));
+		echo $this->formHidden($form->get('setup'));
+		echo $this->formSubmit($form->get('submit'));
+		echo $this->form()->closeTag();
+		return;
+	}
+?>
 	<a class="btn btn-primary btn-lg" href="/securitx/request">Request an account &raquo;</a>
 </div>
