@@ -33,8 +33,52 @@ class SecuritxController extends AbstractActionController {
 		$this->email_host = $email_host;
 	}
 
-	public function homeAction() {
+	public function companiesAction() {
 		return new ViewModel();
+	}
+
+	public function inviteAction() {
+		return new ViewModel();
+	}
+
+	public function sendAction() {
+		return new ViewModel();
+	}
+
+	public function downloadAction() {
+		return new ViewModel();
+	}
+
+	public function forgotAction() {
+		return new ViewModel();
+	}
+
+	public function requestadminAction() {
+		return new ViewModel();
+	}
+
+	public function requesteditorAction() {
+		return new ViewModel();
+	}
+
+	public function homeAction() {
+		$member = new Member('member');
+
+		$id = $this->params()->fromRoute('id');
+
+		try {
+			$member = $this->member_table->getVMember($id);
+		} catch (\InvalidArgumentException $ex) {
+			return $this->redirect()->toRoute('securitx');
+		}
+		if (!$member || !$member->verified)
+			return $this->redirect()->toRoute('securitx');
+
+		$member->moddate = time();
+		$this->member_table->saveMember($member);
+		return new ViewModel([
+			'member' => $member,
+		]);
 	}
 	public function indexAction() {
 		$file = realpath(getcwd()) . "/data/securitx.db";
@@ -68,7 +112,9 @@ class SecuritxController extends AbstractActionController {
 					company_id INTEGER NOT NULL,
 					is_admin INTEGER NOT NULL,
 					is_editor INTEGER NOT NULL,
-					inviter TEXT
+					inviter TEXT,
+					r_admin INTEGER,
+					r_editory INTEGER<
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
 			$adapter->query('
@@ -374,29 +420,16 @@ class SecuritxController extends AbstractActionController {
 		$company =
 		$this->company_table->getCompany($member->company_id);
 
-		if ($member->is_admin || $member->is_editor) {
-			$url = $this->url()->fromRoute(
-				'securitx',
-				[
-					'action' => 'home',
-					'id' => $member->u_key,
-				],
-				[
-					'force_canonical' => true,
-				]
-			);
-		} else {
-			$url = $this->url()->fromRoute(
-				'securitx',
-				[
-					'action' => 'upload',
-					'id' => $member->u_key,
-				],
-				[
-					'force_canonical' => true,
-				]
-			);
-		}
+		$url = $this->url()->fromRoute(
+			'securitx',
+			[
+				'action' => 'home',
+				'id' => $member->u_key,
+			],
+			[
+				'force_canonical' => true,
+			]
+		);
 
 		$emailer = new Emailer($this->email_host);
 		$emailer->sendMemberEmail($member->email, $member->first,

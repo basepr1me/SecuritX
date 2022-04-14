@@ -1,16 +1,25 @@
 :root {
-    --brand-color: #013755;
+	--brand-color: #013755;
 }
 
 .navbar {
-    background-color: var(--brand-color);
+	background-color: var(--brand-color);
 }
 
 .btn-primary {
-    background-color: var(--brand-color);
-    border-color: var(--brand-color);
+	background-color: var(--brand-color);
+	border-color: var(--brand-color);
+	width: 250px;
+}
+
+.btn-secondary {
+	width: 250px;
 }
 
 .help-block {
 	margin-top: 5px;
+}
+
+.a-pad {
+	padding: 0.375rem 0.75rem;
 }
