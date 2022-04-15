@@ -31,6 +31,14 @@ class MemberForm extends Form {
 					'value' => '1',
 				],
 			]);
+			$this->add([
+				'name' => 'submit',
+				'type' => 'submit',
+				'attributes' => [
+					'value' => 'Setup',
+					'id' => 'submitbutton',
+				],
+			]);
 		} else {
 			$this->add([
 				'name' => 'is_admin',
@@ -71,6 +79,14 @@ class MemberForm extends Form {
 					'disable_inarray_validator' => true,
 				],
 			]);
+			$this->add([
+				'name' => 'submit',
+				'type' => 'submit',
+				'attributes' => [
+					'value' => 'Request',
+					'id' => 'submitbutton',
+				],
+			]);
 		}
 		$this->add([
 			'name' => 'first',
@@ -101,14 +117,6 @@ class MemberForm extends Form {
 			],
 			'attributes' => [
 				'multiple' => false,
-			],
-		]);
-		$this->add([
-			'name' => 'submit',
-			'type' => 'submit',
-			'attributes' => [
-				'value' => 'Request',
-				'id' => 'submitbutton',
 			],
 		]);
 	}
