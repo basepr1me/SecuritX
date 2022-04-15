@@ -13,7 +13,8 @@ CREATE TABLE members (
 	is_editor INTEGER,
 	inviter TEXT,
 	r_admin INTEGER,
-	r_editor INTEGER
+	r_editor INTEGER,
+	ip_address TEXT
 );
 
 CREATE TABLE companies (

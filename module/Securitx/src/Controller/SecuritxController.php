@@ -225,7 +225,8 @@ class SecuritxController extends AbstractActionController {
 					is_editor INTEGER,
 					inviter TEXT,
 					r_admin INTEGER,
-					r_editor INTEGER
+					r_editor INTEGER,
+					ip_address TEXT
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
 			$adapter->query('
@@ -593,6 +594,9 @@ class SecuritxController extends AbstractActionController {
 				)
 			);
 		}
+		$member->ip_address = $_SERVER['REMOTE_ADDR'];
+		$this->member_table->saveMember($member);
+
 		$company =
 		    $this->company_table->getCompany($member->company_id);
 

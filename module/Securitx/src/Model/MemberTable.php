@@ -65,6 +65,7 @@ class MemberTable {
 			'moddate' => time(),
 			'is_admin' => $member->is_admin,
 			'is_editor' => $member->is_editor,
+			'ip_address' => $member->ip_address,
 			'company_id' => intval($member->company_id),
 		];
 

@@ -22,6 +22,7 @@ class Member implements InputFilterAwareInterface {
 	public $moddate;
 	public $is_admin;
 	public $is_editor;
+	public $ip_address;
 	public $company_id;
 
 	private $inputFilter;
@@ -38,6 +39,7 @@ class Member implements InputFilterAwareInterface {
 		$this->moddate	= !empty($data['moddate']) ? $data['moddate'] : null;
 		$this->is_admin = !empty($data['is_admin']) ? $data['is_admin'] : 0;
 		$this->is_editor = !empty($data['is_editor']) ? $data['is_editor'] : 0;
+		$this->ip_address = !empty($data['ip_address']) ? $data['ip_address'] : 0;
 		$this->company_id	= !empty($data['company_id']) ? $data['company_id'] : null;
 	}
 
