@@ -573,6 +573,10 @@ class SecuritxController extends AbstractActionController {
 		$member->last, $member->v_key, $url, $company->name);
 
 		$this->member_table->saveMember($member);
+		$folder = realpath(getcwd()) . "/data/downloads/" .
+			    $member->u_key;
+		if (!is_dir($folder))
+			mkdir($folder, 0755, true);
 		return new ViewModel([
 			'company' => $company->name,
 			'first' => $member->first,

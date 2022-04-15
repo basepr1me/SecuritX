@@ -58,8 +58,8 @@ class MemberForm extends Form {
 				'type' => 'Captcha',
 				'options' => [
 					'captcha' => new Captcha\ReCaptcha([
-						'site_key' => '6LdP_nQfAAAAAK16Np2tFS0hKMzRWiDSOj3MA_g_',
-						'secret_key' => '6LdP_nQfAAAAAPggcEHmvrl3JqOGrNPmkqv_KZvh',
+						'site_key' => '********',
+						'secret_key' => '********',
 					]),
 				],
 			]);
