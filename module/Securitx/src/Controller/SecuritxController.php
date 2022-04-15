@@ -242,8 +242,9 @@ class SecuritxController extends AbstractActionController {
 			$adapter->query('
 				CREATE TABLE downloads (
 					downloads_id INTEGER PRIMARY KEY AUTOINCREMENT,
-					id_key UUID,
-					u_key UUID
+					moddate NUMERIC NOT NULL,
+					id_key UUID NOT NULL,
+					u_key UUID NOT NULL
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
 		}
