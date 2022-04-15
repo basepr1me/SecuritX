@@ -9,7 +9,7 @@
 	<hr class="my-4">
 <?php	if ($member->is_admin) { ?>
 		<p><a class="btn btn-secondary btn-lg" style="width: 250px" href="/securitx/companies/<?= $member->u_key ?>">Edit companies &raquo;</a></p>
-<?php } ?>
+<?php	} ?>
 <?php if ($member->is_admin || $member->is_editor) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/invite/<?= $member->u_key ?>">Invite user &raquo;</a></p>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/send/<?= $member->u_key ?>">Send files &raquo;</a></p>
@@ -20,10 +20,21 @@
 
 
 		<p><a class="btn btn-secondary btn-lg" style="width: 250px" href="/securitx/user/<?= $member->u_key ?>">Edit my profile &raquo;</a></p>
-only display this if there are files to download
+
+<?php	if ($has_downloads) { ?>
 	<p><a class="btn btn-secondary btn-lg" href="/securitx/download/<?= $member->u_key ?>">Download files &raquo;</a></p>
+<?php	} ?>
 
-
-check if user has domain name of company and offer request for editor and admin
 	<hr class="my-4">
+<p>
+<?php	if (!$has_admin) { ?>
+	<a class="a a-pad" href="/securitx/requestadmin/<?= $member->u_key ?>">Request administration rights</a>
+<?php
+	if (!$has_editor) {
+?>
+	 | <a class="a a-pad" href="/securitx/requesteditor/<?= $member->u_key ?>">Request editor rights</a>
+<?php
+		}
+	} ?>
+</p>
 </div>

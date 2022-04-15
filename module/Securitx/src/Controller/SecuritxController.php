@@ -5,6 +5,8 @@ use Securitx\Model\MemberTable;
 use Securitx\Model\Member;
 use Securitx\Model\CompanyTable;
 use Securitx\Model\Company;
+use Securitx\Model\DownloadsTable;
+use Securitx\Model\Downloads;
 use Securitx\Model\Emailer;
 
 use Securitx\Form\MemberForm;
@@ -25,12 +27,15 @@ use Laminas\Db\Adapter\Adapter;
 use InvalidArgumentException;
 
 class SecuritxController extends AbstractActionController {
-	private $company_table, $member_table, $email_host, $file;
+	private $company_table, $member_table, $downloads_table;
+	private $email_host, $file;
 
 	public function __construct(MemberTable $member_table,
-	    CompanyTable $company_table, $email_host) {
+	    CompanyTable $company_table, DownloadsTable $downloads_table,
+	    $email_host) {
 		$this->member_table = $member_table;
 		$this->company_table = $company_table;
+		$this->downloads_table = $downloads_table;
 		$this->email_host = $email_host;
 		$this->file = realpath(getcwd()) . "/data/securitx.db";
 	}
@@ -158,8 +163,33 @@ class SecuritxController extends AbstractActionController {
 
 		$member->moddate = time();
 		$this->member_table->saveMember($member);
+
+		$has_admin = 1;
+		$has_editor = 1;
+
+		/* check member domain */
+		$company =
+		    $this->company_table->getCompany($member->company_id);
+		$my_company = explode("@", $member->email);
+
+		if ($company->domain == $my_company[1])
+			$has_domain = 1;
+		else
+			$has_domain = 0;
+		if ($has_domain) {
+			if (!$member->is_admin)
+				$has_admin = 0;
+			if (!$member->is_editor)
+				$has_editor = 0;
+		}
+
+		$has_downloads =
+		    $this->downloads_table->getCount($member->u_key);
 		return new ViewModel([
 			'member' => $member,
+			'has_admin' => $has_admin,
+			'has_editor' => $has_editor,
+			'has_downloads' => $has_downloads
 		]);
 	}
 	public function indexAction() {
@@ -525,7 +555,7 @@ class SecuritxController extends AbstractActionController {
 		$member->moddate = time();
 
 		$company =
-		$this->company_table->getCompany($member->company_id);
+		    $this->company_table->getCompany($member->company_id);
 
 		$url = $this->url()->fromRoute(
 			'securitx',

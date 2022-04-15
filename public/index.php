@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-error_reporting(0);
+/* error_reporting(0); */
 
 use Laminas\Mvc\Application;
 use Laminas\Stdlib\ArrayUtils;

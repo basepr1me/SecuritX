@@ -34,6 +34,16 @@ class Module implements ConfigProviderInterface {
 					$resultSetPrototype->setArrayObjectPrototype(new Model\Company());
 					return new TableGateway('companies', $dbAdapter, null, $resultSetPrototype);
 				},
+				Model\DownloadsTable::class => function($container) {
+					$tableGateway = $container->get(Model\DownloadsTableGateway::class);
+					return new Model\DownloadsTable($tableGateway);
+				},
+				Model\DownloadsTableGateway::class => function ($container) {
+					$dbAdapter = $container->get(AdapterInterface::class);
+					$resultSetPrototype = new ResultSet();
+					$resultSetPrototype->setArrayObjectPrototype(new Model\Downloads());
+					return new TableGateway('downloads', $dbAdapter, null, $resultSetPrototype);
+				},
 			],
 		];
 	}
@@ -45,6 +55,7 @@ class Module implements ConfigProviderInterface {
 					return new Controller\SecuritxController(
 						$container->get(Model\MemberTable::class),
 						$container->get(Model\CompanyTable::class),
+						$container->get(Model\DownloadsTable::class),
 						$container->get('config')['email_host'],
 					);
 				},
