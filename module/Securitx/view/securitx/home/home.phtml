@@ -4,7 +4,7 @@
 <div class="jumbotron">
 	<h1 class="display-4">Welcome to SecuritX</h1>
 
-	<p>Congratulations! You've reached your SecuritX home!</p>
+	<p>SecuritX home of <?= $member->first ?> <?= $member->last ?></p>
 
 	<hr class="my-4">
 <?php	if ($member->is_admin) { ?>
@@ -19,6 +19,7 @@
 <?php	} ?>
 
 
+		<p><a class="btn btn-secondary btn-lg" style="width: 250px" href="/securitx/user/<?= $member->u_key ?>">Edit my profile &raquo;</a></p>
 only display this if there are files to download
 	<p><a class="btn btn-secondary btn-lg" href="/securitx/download/<?= $member->u_key ?>">Download files &raquo;</a></p>
 

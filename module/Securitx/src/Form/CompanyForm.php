@@ -31,6 +31,26 @@ class CompanyForm extends Form {
 			],
 		]);
 		$this->add([
+			'name' => 'phone',
+			'type' => Element\Tel::class,
+			'options' => [
+				'label' => 'Company\'s Primary Phone Number',
+			],
+		]);
+		$this->add([
+			'name' => 'downloads',
+			'type' => 'checkbox',
+			'options' => [
+				'label' => 'Enable Downloads',
+				'use_hidden_element' => true,
+				'checked_value' => '1',
+				'unchecked_value' => '0',
+			],
+			'attributes' => [
+				'value' => '0',
+			],
+		]);
+		$this->add([
 			'name' => 'submit',
 			'type' => 'submit',
 			'attributes' => [

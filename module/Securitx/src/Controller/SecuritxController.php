@@ -18,51 +18,133 @@ use Laminas\View\Model\ViewModel;
 
 use Laminas\Validator\EmailAddress;
 use Laminas\Validator\Hostname;
+use Laminas\I18n\Validator\PhoneNumber;
 
 use Laminas\Db\Adapter\Adapter;
 
 use InvalidArgumentException;
 
 class SecuritxController extends AbstractActionController {
-	private $company_table, $member_table, $email_host;
+	private $company_table, $member_table, $email_host, $file;
 
 	public function __construct(MemberTable $member_table,
 	    CompanyTable $company_table, $email_host) {
 		$this->member_table = $member_table;
 		$this->company_table = $company_table;
 		$this->email_host = $email_host;
+		$this->file = realpath(getcwd()) . "/data/securitx.db";
 	}
 
-	public function companiesAction() {
-		return new ViewModel();
-	}
-
-	public function inviteAction() {
-		return new ViewModel();
-	}
-
-	public function sendAction() {
-		return new ViewModel();
-	}
-
-	public function downloadAction() {
-		return new ViewModel();
-	}
-
-	public function forgotAction() {
-		return new ViewModel();
-	}
-
-	public function requestadminAction() {
-		return new ViewModel();
-	}
-
-	public function requesteditorAction() {
-		return new ViewModel();
-	}
-
-	public function homeAction() {
+	private function getMember() {
 		$member = new Member('member');
+		$id = $this->params()->fromRoute('id');
+
+		try {
+			$member = $this->member_table->getVMember($id);
+		} catch (\InvalidArgumentException $ex) {
+			return $this->redirect()->toRoute('securitx');
+		}
+		if (!$member || !$member->verified)
+			return $this->redirect()->toRoute('securitx');
+
+		$member->moddate = time();
+		$this->member_table->saveMember($member);
+		return($member);
+	}
+	private function checkAnyAdmin() {
+		$t_member = new Member('admin');
+		if (file_exists($this->file)) {
+			if ($t_member = $this->member_table->getAnyValidAdmin())
+				return 1;
+			else
+				return 0;
+		}
+		return 0;
+	}
+	public function companiesAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		$member = $this->getMember();
+		if (!$member->is_admin) {
+			return $this->redirect()->toRoute('securitx',
+				array(
+					'action' => 'home',
+					'id' => $member->u_key,
+				)
+			);
+		}
+		return new ViewModel();
+	}
+	public function inviteAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		$member = $this->getMember();
+		if (!$member->is_admin || !$member->is_editor) {
+			return $this->redirect()->toRoute('securitx',
+				array(
+					'action' => 'home',
+					'id' => $member->u_key,
+				)
+			);
+		}
+		return new ViewModel();
+	}
+	public function sendAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		$member = $this->getMember();
+		if (!$member->is_admin || !$member->is_editor) {
+			return $this->redirect()->toRoute('securitx',
+				array(
+					'action' => 'home',
+					'id' => $member->u_key,
+				)
+			);
+		}
+		return new ViewModel();
+	}
+	public function userAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		$member = $this->getMember();
+		if (!$member->is_admin) {
+			return $this->redirect()->toRoute('securitx',
+				array(
+					'action' => 'home',
+					'id' => $member->u_key,
+				)
+			);
+		}
+		return new ViewModel();
+	}
+	public function downloadAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		$member = $this->getMember();
+		return new ViewModel();
+	}
+	public function forgotAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		return new ViewModel();
+	}
+	public function requestadminAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		$member = $this->getMember();
+		return new ViewModel();
+	}
+	public function requesteditorAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		$member = $this->getMember();
+		return new ViewModel();
+	}
+	public function homeAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+
+		$member = $this->getMember();
 
 		$id = $this->params()->fromRoute('id');
 
@@ -81,9 +163,8 @@ class SecuritxController extends AbstractActionController {
 		]);
 	}
 	public function indexAction() {
-		$file = realpath(getcwd()) . "/data/securitx.db";
-		if (!file_exists($file)) {
-			if (!$fh = fopen($file, "w+")) {
+		if (!file_exists($this->file)) {
+			if (!$fh = fopen($this->file, "w+")) {
 				return new ViewModel([
 					'db' => false,
 				]);
@@ -96,7 +177,7 @@ class SecuritxController extends AbstractActionController {
 			fclose($fh);
 			$adapter = new Adapter([
 				'driver' => 'Pdo_Sqlite',
-				'database' => $file,
+				'database' => $this->file,
 			]);
 			$adapter->query('
 				CREATE TABLE members (
@@ -110,11 +191,11 @@ class SecuritxController extends AbstractActionController {
 					verified INTEGER NOT NULL,
 					moddate NUMERIC NOT NULL,
 					company_id INTEGER NOT NULL,
-					is_admin INTEGER NOT NULL,
-					is_editor INTEGER NOT NULL,
+					is_admin INTEGER,
+					is_editor INTEGER,
 					inviter TEXT,
 					r_admin INTEGER,
-					r_editory INTEGER<
+					r_editor INTEGER
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
 			$adapter->query('
@@ -122,7 +203,10 @@ class SecuritxController extends AbstractActionController {
 					company_id INTEGER PRIMARY KEY AUTOINCREMENT,
 					name TEXT NOT NULL,
 					short TEXT NOT NULL,
-					domain TEXT NOT NULL
+					domain TEXT NOT NULL,
+					phone TEXT NOT NULL,
+					downloads INTEGER,
+					is_admin INTEGER
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
 			$adapter->query('
@@ -146,7 +230,8 @@ class SecuritxController extends AbstractActionController {
 					'member' => false,
 					'verified' => false,
 					'form' => $form,
-					'valid' => '',
+					'valid_domain' => '',
+					'valid_phone' => '',
 					'db' => true,
 				]);
 			}
@@ -161,13 +246,32 @@ class SecuritxController extends AbstractActionController {
 					'member' => false,
 					'verified' => false,
 					'form' => $form,
-					'valid' => '',
+					'valid_domain' => '',
+					'valid_phone' => '',
 					'db' => true,
 				]);
 			}
 
 			$company->exchangeArray($form->getData());
 
+			$phone_validator = new PhoneNumber([
+				'country' => 'US',
+				'allow_possible' => true,
+			]);
+			$phone_test = preg_replace('/[\-\+\(\)\s]+/i', '',
+			    $company->phone);
+			if (!$phone_validator->isValid($phone_test)) {
+				return new ViewModel([
+					'company' => false,
+					'exists' => false,
+					'member' => false,
+					'verified' => false,
+					'form' => $form,
+					'valid_domain' => '',
+					'valid_phone' => 'Please enter a valid phone number',
+					'db' => true,
+				]);
+			}
 			$validator = new Hostname([
 				'allow' => Hostname::ALLOW_DNS,
 				'useMxCheck' => true,
@@ -185,10 +289,12 @@ class SecuritxController extends AbstractActionController {
 					'member' => false,
 					'verified' => false,
 					'form' => $form,
-					'valid' => 'Please enter a valid domain',
+					'valid_domain' => 'Please enter a valid domain',
+					'valid_phone' => '',
 					'db' => true,
 				]);
 			}
+			$company->is_admin = 1;
 			$this->company_table->saveCompany($company);
 			$folder = realpath(getcwd()) . "/data/uploads/" .
 			    $company->short;
@@ -307,6 +413,9 @@ class SecuritxController extends AbstractActionController {
 
 	}
 	public function requestAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+
 		$form = new MemberForm('member');
 		$companies = $this->company_table->fetchAll();
 		$request = $this->getRequest();
@@ -361,8 +470,6 @@ class SecuritxController extends AbstractActionController {
 		if ($validator->isValid($member->email)) {
 			$member->v_key = uniqid();
 			$member->verified = 0;
-			$member->is_admin = 0;
-			$member->is_editor = 0;
 		} else {
 			return new ViewModel([
 				'exists' => false,
@@ -442,23 +549,17 @@ class SecuritxController extends AbstractActionController {
 		]);
 	}
 	public function uploadAction() {
-		$member = new Member('member');
-
-		$id = $this->params()->fromRoute('id');
-
-		try {
-			$member = $this->member_table->getVMember($id);
-		} catch (\InvalidArgumentException $ex) {
-			return $this->redirect()->toRoute('securitx');
+		$member = $this->getMember();
+		if ($member->is_admin || $member->is_editor) {
+			return $this->redirect()->toRoute('securitx',
+				array(
+					'action' => 'home',
+					'id' => $member->u_key,
+				)
+			);
 		}
-		if (!$member || !$member->verified)
-			return $this->redirect()->toRoute('securitx');
-
-		$member->moddate = time();
-		$this->member_table->saveMember($member);
-
 		$company =
-		$this->company_table->getCompany($member->company_id);
+		    $this->company_table->getCompany($member->company_id);
 
 		$form = new UploaderForm($company->short);
 		$request = $this->getRequest();

@@ -23,7 +23,17 @@ class MemberTable {
 		return $row;
 	}
 	public function getAnyAdmin() {
-		$rowset = $this->tableGateway->select(['is_admin' => 1]);
+		$rowset = $this->tableGateway->select([
+			'is_admin' => 1,
+		]);
+		$row = $rowset->current();
+		return $row;
+	}
+	public function getAnyValidAdmin() {
+		$rowset = $this->tableGateway->select([
+			'is_admin' => 1,
+			'verified' => 1,
+		]);
 		$row = $rowset->current();
 		return $row;
 	}

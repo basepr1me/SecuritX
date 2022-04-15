@@ -15,6 +15,9 @@ class Company implements InputFilterAwareInterface {
 	public $name;
 	public $short;
 	public $domain;
+	public $phone;
+	public $downloads;
+	public $is_admin;
 
 	private $inputFilter;
 
@@ -22,7 +25,10 @@ class Company implements InputFilterAwareInterface {
 		$this->company_id	= !empty($data['company_id']) ? $data['company_id'] : null;
 		$this->name	= !empty($data['name']) ? $data['name'] : null;
 		$this->short	= !empty($data['short']) ? $data['short'] : null;
+		$this->phone	= !empty($data['phone']) ? $data['phone'] : null;
 		$this->domain	= !empty($data['domain']) ? $data['domain'] : null;
+		$this->downloads	= !empty($data['downloads']) ? $data['downloads'] : 0;
+		$this->is_admin	= !empty($data['is_admin']) ? $data['is_admin'] : 0;
 	}
 
 	public function setInputFilter(InputFilterInterface $inputFilter) {

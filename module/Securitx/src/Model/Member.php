@@ -36,8 +36,8 @@ class Member implements InputFilterAwareInterface {
 		$this->u_key	= !empty($data['u_key']) ? $data['u_key'] : null;
 		$this->verified	= !empty($data['verified']) ? $data['verified'] : null;
 		$this->moddate	= !empty($data['moddate']) ? $data['moddate'] : null;
-		$this->is_admin = !empty($data['is_admin']) ? $data['is_admin'] : null;
-		$this->is_editor = !empty($data['is_editor']) ? $data['is_editor'] : null;
+		$this->is_admin = !empty($data['is_admin']) ? $data['is_admin'] : 0;
+		$this->is_editor = !empty($data['is_editor']) ? $data['is_editor'] : 0;
 		$this->company_id	= !empty($data['company_id']) ? $data['company_id'] : null;
 	}
 

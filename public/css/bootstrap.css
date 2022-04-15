@@ -220,6 +220,7 @@ th {
 label {
   display: inline-block;
   margin-bottom: 0.5rem;
+  font-weight: bold;
 }
 
 button {
@@ -2177,6 +2178,13 @@ textarea.form-control {
 
 .form-group {
   margin-bottom: 1rem;
+}
+
+.form-group-left {
+  width: 42px;
+  margin-bottom: 1rem;
+  text-align: left;
+  align-items: left;
 }
 
 .form-text {

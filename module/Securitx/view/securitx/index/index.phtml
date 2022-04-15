@@ -32,6 +32,14 @@
 		$domain->setAttribute('class', 'form-control');
 		$domain->setAttribute('placeholder', 'Email Domain');
 
+		$phone = $form->get('phone');
+		$phone->setAttribute('class', 'form-control');
+		$phone->setAttribute('placeholder', 'Phone Number');
+
+		$downloads = $form->get('downloads');
+		$downloads->setAttribute('class', 'form-control');
+		$downloads->setAttribute('placeholder', 'Enable Downloads');
+
 		$submit = $form->get('submit');
 		$submit->setAttribute('class', 'btn btn-primary');
 
@@ -57,11 +65,28 @@
 	</div>
 
 	<div class="form-group">
+	<?= $this->formLabel($phone) ?>
+	<?= $this->formElement($phone) ?>
+	<?= $this->formElementErrors()->render($phone,
+	    ['class' => 'help-block']) ?>
+	<p style="color: red"><?= $valid_phone ?></p>
+	</div>
+
+	<div class="form-group">
 	<?= $this->formLabel($domain) ?>
 	<?= $this->formElement($domain) ?>
 	<?= $this->formElementErrors()->render($domain,
 	    ['class' => 'help-block']) ?>
-	<p style="color: red"><?= $valid ?></p>
+	<p style="color: red"><?= $valid_domain ?></p>
+	</div>
+
+	<div class="form-group">
+	<?= $this->formLabel($downloads) ?> (if you plan to enable automatic file handling via other scripting, do not enable this)
+	<div class="form-group-left">
+	<?= $this->formElement($downloads) ?>
+	<?= $this->formElementErrors()->render($downloads,
+	    ['class' => 'help-block']) ?>
+	</div>
 	</div>
 
 <?php

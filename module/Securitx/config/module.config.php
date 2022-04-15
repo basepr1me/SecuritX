@@ -48,7 +48,6 @@ return [
             		'securitx/securitx/request'	=> __DIR__ . '/../view/securitx/request/request.phtml',
             		'securitx/securitx/verify'	=> __DIR__ . '/../view/securitx/verify/verify.phtml',
             		'securitx/securitx/upload'	=> __DIR__ . '/../view/securitx/upload/upload.phtml',
-            		'securitx/securitx/thanks'	=> __DIR__ . '/../view/securitx/thanks/thanks.phtml',
             		'securitx/securitx/home'	=> __DIR__ . '/../view/securitx/home/home.phtml',
             		'securitx/securitx/download'	=> __DIR__ . '/../view/securitx/download/download.phtml',
             		'securitx/securitx/send'	=> __DIR__ . '/../view/securitx/send/send.phtml',
