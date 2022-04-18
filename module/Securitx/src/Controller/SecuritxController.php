@@ -95,7 +95,103 @@ class SecuritxController extends AbstractActionController {
 				)
 			);
 		}
-		return new ViewModel();
+
+		$m_key = $member->u_key;
+		$form = new MemberForm('invite', $this->recaptcha);
+		$companies = $this->company_table->fetchAll();
+		$request = $this->getRequest();
+
+		if (!$request->isPost()) {
+			return new ViewModel([
+				'exists' => false,
+				'form' => $form,
+				'companies' => $companies,
+				'registered' => false,
+				'valid' => '',
+				'id' => $m_key,
+			]);
+		}
+
+		$member = new Member('member');
+		$form->setInputFilter($member->getInputFilter());
+		$form->setData($request->getPost());
+
+		if (!$form->isValid()) {
+			return new ViewModel([
+				'exists' => false,
+				'form' => $form,
+				'companies' => $companies,
+				'registered' => false,
+				'valid' => '',
+				'id' => $m_key,
+			]);
+		}
+
+		$member->exchangeArray($form->getData());
+
+		if ($this->member_table->checkMember($member->email,
+			$member->company_id)) {
+			return new ViewModel([
+				'exists' => true,
+				'form' => $form,
+				'companies' => $companies,
+				'registered' => false,
+				'valid' => '',
+				'id' => $m_key,
+			]);
+		}
+
+		$validator = new EmailAddress([
+			'allow' => Hostname::ALLOW_DNS,
+			'useMxCheck' => true,
+			'useDeepMxCheck' => true,
+			'useDomainCheck' => true,
+		]);
+		$validator->setOptions([
+			'domain' => true,
+		]);
+
+		if ($validator->isValid($member->email)) {
+			$member->v_key = uniqid();
+			$member->verified = 0;
+		} else {
+			return new ViewModel([
+				'exists' => false,
+				'form' => $form,
+				'companies' => $companies,
+				'registered' => false,
+				'valid' => 'Please enter a valid email address',
+				'id' => $m_key,
+			]);
+		}
+
+		$url = $this->url()->fromRoute(
+			'securitx',
+			[
+				'action' => 'verify',
+				'id' => $member->v_key,
+			],
+			[
+				'force_canonical' => true,
+			]
+		);
+
+		$this->member_table->saveMember($member);
+		$company =
+		    $this->company_table->getCompany($member->company_id);
+
+		$emailer = new Emailer($this->email_host);
+		$emailer->sendInviteEmail($member->email, $member->first,
+		    $member->last, $member->v_key, $url, $this->hipaa['notice'],
+		    $company->name);
+
+		return new ViewModel([
+			'company' => $company->name,
+			'first' => $member->first,
+			'registered' => true,
+			'valid' => '',
+			'id' => $m_key,
+		]);
 	}
 	public function sendAction() {
 		if (!$this->checkAnyAdmin())

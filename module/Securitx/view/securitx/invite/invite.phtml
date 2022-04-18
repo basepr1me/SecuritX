@@ -1,10 +1,111 @@
 <?php
-	$this->headTitle('SecuritX: Inviter');
+$this->headTitle('SecuritX: Request');
 ?>
 <div class="jumbotron">
-	<h1 class="display-4">Welcome to SecuritX</h1>
+<?php
+	if ($registered) {
+?>
+	<h1 class="display-4">Invite completed</h1>
+	<p>Thanks you for inviting a new member to <?= $company ?>.<br />
+	They will need to verify the account from their email.<br />
+	The link will expire in 24 hours.</p>
+<?php
+		goto done;
+	}
+?>
+	<h1 class="display-4">Invite a member</h1>
 
-	<p>Congratulations! You've reached your SecuritX inviter!</p>
-
+	<p>Please fill out and submit the request form below. You will receive a validation email to activate your account.</p>
 	<hr class="my-4">
+<?php
+	$co_opts = array();
+	foreach ($companies as $company) {
+		$co_opt = [
+			'value' => $company->company_id,
+			'label' => $this->escapeHtml($company->name),
+		];
+		array_push($co_opts, $co_opt);
+	}
+	$first = $form->get('first');
+	$first->setAttribute('class', 'form-control');
+	$first->setAttribute('placeholder', 'First Name');
+
+	$last = $form->get('last');
+	$last->setAttribute('class', 'form-control');
+	$last->setAttribute('placeholder', 'Last Name');
+
+	$office = $form->get('office');
+	$office->setAttribute('class', 'form-control');
+	$office->setAttribute('placeholder', 'Office Name');
+
+	$email = $form->get('email');
+	$email->setAttribute('class', 'form-control');
+	$email->setAttribute('placeholder', 'Email Address');
+
+	$company_id = $form->get('company_id');
+	$company_id->setAttribute('class', 'form-control');
+	$company_id->setAttribute('placeholder', 'Select Company');
+	$company_id->setValueOptions($co_opts);
+
+	$submit = $form->get('submit');
+	$submit->setAttribute('class', 'btn btn-primary');
+
+
+	$form->setAttribute('action', $this->url('securitx',
+		['action' => 'invite', 'id'=> $id]
+	));
+	$form->prepare();
+
+	echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+	<?= $this->formLabel($first) ?>
+	<?= $this->formElement($first) ?>
+	<?= $this->formElementErrors()->render($first,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($last) ?>
+	<?= $this->formElement($last) ?>
+	<?= $this->formElementErrors()->render($last,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($office) ?>
+	<?= $this->formElement($office) ?>
+	<?= $this->formElementErrors()->render($office,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($email) ?>
+	<?= $this->formElement($email) ?>
+	<?= $this->formElementErrors()->render($email,
+	    ['class' => 'help-block']) ?>
+<?php
+	if ($exists) {
+?>
+	<p style="color: red">An email with that company selection already exists. Please change the email address or pick a different company.</p>
+<?php
+	} else {
+?>
+	<p style="color: red"><?= $valid ?></p>
+<?php
+	}
+?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($company_id) ?>
+	<?= $this->formElement($company_id) ?>
+	<?= $this->formElementErrors()->render($company_id,
+	    ['class' => 'help-block']) ?>
+	</div>
+<?php
+	echo $this->formHidden($form->get('is_admin'));
+	echo $this->formHidden($form->get('is_editor'));
+	echo $this->formHidden($form->get('setup'));
+	echo $this->formSubmit($form->get('submit'));
+	echo $this->form()->closeTag();
+done:
+?>
+	<br /><p><a class="a a-pad" href="/securitx/home/<?= $id ?>">Go home</a></p>
 </div>

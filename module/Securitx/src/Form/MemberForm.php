@@ -63,17 +63,19 @@ class MemberForm extends Form {
 					'value' => '0',
 				],
 			]);
-			$this->add([
-				'name' => 'captcha',
-				'type' => 'Captcha',
-				'options' => [
-					'captcha' => new Captcha\ReCaptcha([
-						'site_key' => $this->site_key,
-						'secret_key' =>
-						    $this->secret_key,
-					]),
-				],
-			]);
+			if ($name != 'invite') {
+				$this->add([
+					'name' => 'captcha',
+					'type' => 'Captcha',
+					'options' => [
+						'captcha' => new Captcha\ReCaptcha([
+							'site_key' => $this->site_key,
+							'secret_key' =>
+							    $this->secret_key,
+						]),
+					],
+				]);
+			}
 			$this->add([
 				'name' => 'company_id',
 				'type' => 'select',
@@ -82,14 +84,25 @@ class MemberForm extends Form {
 					'disable_inarray_validator' => true,
 				],
 			]);
-			$this->add([
-				'name' => 'submit',
-				'type' => 'submit',
-				'attributes' => [
-					'value' => 'Request',
-					'id' => 'submitbutton',
-				],
-			]);
+			if ($name == 'invite') {
+				$this->add([
+					'name' => 'submit',
+					'type' => 'submit',
+					'attributes' => [
+						'value' => 'Send Invite',
+						'id' => 'submitbutton',
+					],
+				]);
+			} else {
+				$this->add([
+					'name' => 'submit',
+					'type' => 'submit',
+					'attributes' => [
+						'value' => 'Send Request',
+						'id' => 'submitbutton',
+					],
+				]);
+			}
 		}
 		$this->add([
 			'name' => 'first',
