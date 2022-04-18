@@ -53,6 +53,11 @@ class MemberTable {
 		$row = $rowset->current();
 		return $row;
 	}
+	public function getMemberByEmail($email) {
+		$rowset = $this->tableGateway->select(['email' => $email]);
+		$row = $rowset->current();
+		return $row;
+	}
 	public function saveMember(Member $member) {
 		$data = [
 			'first' => $member->first,

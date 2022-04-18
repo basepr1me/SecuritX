@@ -12,6 +12,7 @@ use Securitx\Model\Emailer;
 use Securitx\Form\MemberForm;
 use Securitx\Form\UploaderForm;
 use Securitx\Form\CompanyForm;
+use Securitx\Form\ForgotForm;
 
 use Laminas\Mvc\InjectApplicationEventInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -28,16 +29,18 @@ use InvalidArgumentException;
 
 class SecuritxController extends AbstractActionController {
 	private $company_table, $member_table, $downloads_table;
-	private $email_host, $file;
+	private $email_host, $file, $recaptcha, $hipaa;
 
 	public function __construct(MemberTable $member_table,
 	    CompanyTable $company_table, DownloadsTable $downloads_table,
-	    $email_host) {
+	    $email_host, $recaptcha, $hipaa) {
 		$this->member_table = $member_table;
 		$this->company_table = $company_table;
 		$this->downloads_table = $downloads_table;
 		$this->email_host = $email_host;
 		$this->file = realpath(getcwd()) . "/data/securitx.db";
+		$this->recaptcha = $recaptcha;
+		$this->hipaa = $hipaa;
 	}
 
 	private function getMember() {
@@ -131,7 +134,68 @@ class SecuritxController extends AbstractActionController {
 	public function forgotAction() {
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
-		return new ViewModel();
+
+		$form = new ForgotForm($this->recaptcha);
+		$request = $this->getRequest();
+
+		if (!$request->isPost()) {
+			return new ViewModel([
+				'form' => $form,
+				'valid' => '',
+				'completed' => false,
+			]);
+		}
+
+		$form->setData($request->getPost());
+		if (!$form->isValid()) {
+			return new ViewModel([
+				'form' => $form,
+				'valid' => '',
+				'completed' => false,
+			]);
+		}
+
+		$data = $form->getData();
+		$validator = new EmailAddress([
+			'allow' => Hostname::ALLOW_DNS,
+			'useMxCheck' => true,
+			'useDeepMxCheck' => true,
+			'useDomainCheck' => true,
+		]);
+		$validator->setOptions([
+			'domain' => true,
+		]);
+
+		if ($validator->isValid($data['email'])) {
+			$member = new Member('member');
+			$member = $this->member_table->getMemberByEmail($data['email']);
+			$url = $this->url()->fromRoute(
+				'securitx',
+				[
+					'action' => 'home',
+					'id' => $member->u_key,
+				],
+				[
+					'force_canonical' => true,
+				]
+			);
+
+			$company =
+			    $this->company_table->getCompany($member->company_id);
+			$emailer = new Emailer($this->email_host);
+			$emailer->sendMemberEmail($member->email, $member->first,
+			    $member->last, $member->v_key, $url, $company->name,
+			    $this->hipaa['notice']);
+			return new ViewModel([
+				'completed' => true,
+			]);
+		} else {
+			return new ViewModel([
+				'form' => $form,
+				'valid' => 'Please enter a valid email address',
+				'completed' => false,
+			]);
+		}
 	}
 	public function requestadminAction() {
 		if (!$this->checkAnyAdmin())
@@ -356,7 +420,7 @@ class SecuritxController extends AbstractActionController {
 				'db' => true,
 			]);
 		} else {
-			$form = new MemberForm('admin');
+			$form = new MemberForm('admin', $this->recaptcha);
 			$request = $this->getRequest();
 
 			if ($co_added == 1 || !$request->isPost()) {
@@ -426,7 +490,7 @@ class SecuritxController extends AbstractActionController {
 			$emailer = new Emailer($this->email_host);
 			$emailer->sendVerifyEmail($member->email,
 			    $member->first, $member->last, $member->v_key,
-			    $url);
+			    $url, $this->hipaa['notice']);
 
 			$companies = $this->company_table->fetchAll();
 			foreach ($companies as $company)
@@ -448,7 +512,7 @@ class SecuritxController extends AbstractActionController {
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
 
-		$form = new MemberForm('member');
+		$form = new MemberForm('member', $this->recaptcha);
 		$companies = $this->company_table->fetchAll();
 		$request = $this->getRequest();
 
@@ -525,7 +589,7 @@ class SecuritxController extends AbstractActionController {
 
 		$emailer = new Emailer($this->email_host);
 		$emailer->sendVerifyEmail($member->email, $member->first,
-		    $member->last, $member->v_key, $url);
+		    $member->last, $member->v_key, $url, $this->hipaa['notice']);
 
 		$this->member_table->saveMember($member);
 		$company =
@@ -572,7 +636,8 @@ class SecuritxController extends AbstractActionController {
 
 		$emailer = new Emailer($this->email_host);
 		$emailer->sendMemberEmail($member->email, $member->first,
-		$member->last, $member->v_key, $url, $company->name);
+		    $member->last, $member->v_key, $url, $company->name,
+		    $this->hipaa['notice']);
 
 		$this->member_table->saveMember($member);
 		$folder = realpath(getcwd()) . "/data/downloads/" .

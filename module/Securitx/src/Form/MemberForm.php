@@ -6,8 +6,10 @@ use Laminas\Form\Form;
 use Laminas\Form\Element;
 
 class MemberForm extends Form {
-	public function __construct($name) {
-		parent::__construct($name);
+	public function __construct($name, $recaptcha) {
+		parent::__construct();
+		$this->site_key = $recaptcha['site_key'];
+		$this->secret_key = $recaptcha['secret_key'];
 
 		if ($name == 'admin') {
 			$this->add([
@@ -66,8 +68,9 @@ class MemberForm extends Form {
 				'type' => 'Captcha',
 				'options' => [
 					'captcha' => new Captcha\ReCaptcha([
-						'site_key' => '********',
-						'secret_key' => '********',
+						'site_key' => $this->site_key,
+						'secret_key' =>
+						    $this->secret_key,
 					]),
 				],
 			]);

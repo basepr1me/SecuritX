@@ -13,7 +13,8 @@ class Emailer {
 		$this->ip = $email_host['ip'];
 	}
 
-	public function sendVerifyEmail($email, $first, $last, $id, $url) {
+	public function sendVerifyEmail($email, $first, $last, $id, $url,
+	    $hipaa) {
 		$message = new Message();
 		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
 		$message->addTo("$email", "$first $last");
@@ -22,7 +23,8 @@ class Emailer {
 		$message->setBody(
 			"Hello $first,\r\n\r\nPlease visit the following " .
 			"url to confirm your member request. The link will " .
-			"expire in 24 hours. Thank you!\r\n\r\n$url"
+			"expire in 24 hours. Thank you!\r\n\r\n$url\r\n\r\n" .
+			"--\r\n\r\n$hipaa"
 		);
 
 		$transport = new SmtpTransport();
@@ -34,7 +36,7 @@ class Emailer {
 		$transport->send($message);
 	}
 	public function sendMemberEmail($email, $first, $last, $id, $url,
-	    $company) {
+	    $company, $hipaa) {
 		$message = new Message();
 		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
 		$message->addTo("$email", "$first $last");
@@ -46,7 +48,7 @@ class Emailer {
 			"documents for $company. Do not lose or share this " .
 			"link with anyone.\r\n\r\nIf this link is not used ".
 			"for thirty days, it will be removed. Thank you!" .
-			"\r\n\r\n$url"
+			"\r\n\r\n$url\r\n\r\n--\r\n\r\n$hipaa"
 		);
 
 		$transport = new SmtpTransport();

@@ -7,8 +7,8 @@ use Laminas\Form\Form;
 
 class UploaderForm extends Form {
 
-	public function __construct($name = null, $options = []) {
-		parent::__construct($name, $options);
+	public function __construct($name = null) {
+		parent::__construct($name);
 		$this->addElements($name);
 		$this->addInputFilter($name);
 		$this->add([

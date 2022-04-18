@@ -2,9 +2,50 @@
 	$this->headTitle('SecuritX: Forgot Home');
 ?>
 <div class="jumbotron">
-	<h1 class="display-4">Welcome to SecuritX</h1>
-
-	<p>Congratulations! You've reached your SecuritX home reminder!</p>
+<?php	if ($this->completed) { ?>
+	<h1 class="display-4">Request completed</h1>
+	<p>Thanks you, your request is completed.<br />
+	If we find an account with that email address, you'll receive an email shortly.</p>
+<?php	goto done; } else { ?>
+	<h1 class="display-4">Request Home Link</h1>
+	<p>Enter your email address and your home link will be emailed to you.</p>
+<?php	} ?>
 
 	<hr class="my-4">
+<?php
+	$email = $form->get('email');
+	$email->setAttribute('class', 'form-control');
+	$email->setAttribute('placeholder', 'Email Address');
+
+	$captcha = $form->get('captcha');
+	$captcha->setAttribute('class', 'form-control');
+	$captcha->setAttribute('placeholder', 'Are you human?');
+
+	$submit = $form->get('submit');
+	$submit->setAttribute('class', 'btn btn-primary');
+
+	$form->setAttribute('action', $this->url('securitx',
+	    ['action' => 'forgot']));
+	$form->prepare();
+
+	echo $this->form()->openTag($form);
+?>
+
+	<div class="form-group">
+	<?= $this->formLabel($email) ?>
+	<?= $this->formElement($email) ?>
+	<?= $this->formElementErrors()->render($email,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<p style="color: red"><?= $valid ?></p>
+	<div class="form-group">
+	<?= $this->formElement($captcha) ?>
+	<?= $this->formElementErrors()->render($captcha,
+	    ['class' => 'help-block']) ?>
+	</div>
+<?php
+	echo $this->formSubmit($form->get('submit'));
+	echo $this->form()->closeTag();
+done:
+?>
 </div>

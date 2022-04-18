@@ -57,6 +57,8 @@ class Module implements ConfigProviderInterface {
 						$container->get(Model\CompanyTable::class),
 						$container->get(Model\DownloadsTable::class),
 						$container->get('config')['email_host'],
+						$container->get('config')['recaptcha'],
+						$container->get('config')['hipaa'],
 					);
 				},
 			],
