@@ -15,9 +15,9 @@ class Emailer {
 
 	public function sendVerifyEmail($email, $first, $last, $id, $url) {
 		$message = new Message();
-		$message->addFrom('no-reply@visnet.us', 'SecuritX');
+		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
 		$message->addTo("$email", "$first $last");
-		$message->addReplyTo('no-reply@visnet.us', 'SecuritX');
+		$message->addReplyTo('no-reply@' . $this->hostname, 'SecuritX');
 		$message->setSubject('Your SecuritX Verification Link');
 		$message->setBody(
 			"Hello $first,\r\n\r\nPlease visit the following " .
@@ -36,9 +36,9 @@ class Emailer {
 	public function sendMemberEmail($email, $first, $last, $id, $url,
 	    $company) {
 		$message = new Message();
-		$message->addFrom('no-reply@visnet.us', 'SecuritX');
+		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
 		$message->addTo("$email", "$first $last");
-		$message->addReplyTo('no-reply@visnet.us', 'SecuritX');
+		$message->addReplyTo('no-reply@' . $this->hostname, 'SecuritX');
 		$message->setSubject('Your Private SecuritX Link');
 		$message->setBody(
 			"Hello $first,\r\n\r\nThe following link is your " .
