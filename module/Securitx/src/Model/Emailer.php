@@ -36,19 +36,18 @@ class Emailer {
 		$transport->send($message);
 	}
 	public function sendInviteEmail($email, $first, $last, $id, $url,
-	    $hipaa, $company) {
+	    $hipaa, $company, $inviter) {
 		$message = new Message();
 		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
 		$message->addTo("$email", "$first $last");
 		$message->addReplyTo('no-reply@' . $this->hostname, 'SecuritX');
 		$message->setSubject('Your SecuritX Verification Link');
 		$message->setBody(
-			"Hello $first,\r\n\r\nYou have been invited to become ".
-			"a member of the SecuritX instance of $company. ".
-			"Please visit the following " .
-			"url to confirm your membership . The link will " .
-			"expire in 24 hours. Thank you!\r\n\r\n$url\r\n\r\n" .
-			"--\r\n\r\n$hipaa"
+			"Hello $first,\r\n\r\nYou have been invited to become " .
+			"a member of the SecuritX instance of $company by " .
+			"$inviter. Please visit the following url to verify " .
+			"your email. The link will expire in 24 hours. ".
+			"Thank you!\r\n\r\n$url\r\n\r\n--\r\n\r\n$hipaa"
 		);
 
 		$transport = new SmtpTransport();

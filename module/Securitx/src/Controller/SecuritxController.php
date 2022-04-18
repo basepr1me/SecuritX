@@ -96,6 +96,7 @@ class SecuritxController extends AbstractActionController {
 			);
 		}
 
+		$inviter = $member->first . " " .$member->last;
 		$m_key = $member->u_key;
 		$form = new MemberForm('invite', $this->recaptcha);
 		$companies = $this->company_table->fetchAll();
@@ -176,6 +177,7 @@ class SecuritxController extends AbstractActionController {
 			]
 		);
 
+		$member->inviter = $inviter;
 		$this->member_table->saveMember($member);
 		$company =
 		    $this->company_table->getCompany($member->company_id);
@@ -183,7 +185,7 @@ class SecuritxController extends AbstractActionController {
 		$emailer = new Emailer($this->email_host);
 		$emailer->sendInviteEmail($member->email, $member->first,
 		    $member->last, $member->v_key, $url, $this->hipaa['notice'],
-		    $company->name);
+		    $company->name, $inviter);
 
 		return new ViewModel([
 			'company' => $company->name,
@@ -743,6 +745,7 @@ class SecuritxController extends AbstractActionController {
 		return new ViewModel([
 			'company' => $company->name,
 			'first' => $member->first,
+			'id' => $member->u_key,
 		]);
 	}
 	public function uploadAction() {
