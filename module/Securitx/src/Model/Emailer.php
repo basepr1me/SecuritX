@@ -13,8 +13,7 @@ class Emailer {
 		$this->ip = $email_host['ip'];
 	}
 
-	public function sendVerifyEmail($email, $first, $last, $id, $url,
-	    $hipaa) {
+	public function sendVerifyEmail($email, $first, $last, $url, $hipaa) {
 		$message = new Message();
 		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
 		$message->addTo("$email", "$first $last");
@@ -35,8 +34,8 @@ class Emailer {
 		$transport->setOptions($options);
 		$transport->send($message);
 	}
-	public function sendInviteEmail($email, $first, $last, $id, $url,
-	    $hipaa, $company, $inviter) {
+	public function sendInviteEmail($email, $first, $last, $url, $hipaa,
+	    $company, $inviter) {
 		$message = new Message();
 		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
 		$message->addTo("$email", "$first $last");
@@ -58,8 +57,8 @@ class Emailer {
 		$transport->setOptions($options);
 		$transport->send($message);
 	}
-	public function sendMemberEmail($email, $first, $last, $id, $url,
-	    $company, $hipaa) {
+	public function sendMemberEmail($email, $first, $last, $url, $company,
+	    $hipaa) {
 		$message = new Message();
 		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
 		$message->addTo("$email", "$first $last");
@@ -72,6 +71,27 @@ class Emailer {
 			"link with anyone.\r\n\r\nIf this link is not used ".
 			"for thirty days, it will be removed. Thank you!" .
 			"\r\n\r\n$url\r\n\r\n--\r\n\r\n$hipaa"
+		);
+
+		$transport = new SmtpTransport();
+		$options = new SmtpOptions([
+			'name' => $this->hostname,
+			'host' => $this->ip,
+		]);
+		$transport->setOptions($options);
+		$transport->send($message);
+	}
+	public function sendInviterEmail($email, $first, $last, $ifirst,
+	    $ilast, $hipaa) {
+		$message = new Message();
+		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
+		$message->addTo("$email", "$first $last");
+		$message->addReplyTo('no-reply@' . $this->hostname, 'SecuritX');
+		$message->setSubject('Your SecuritX Invitation');
+		$message->setBody(
+			"Hello $first,\r\n\r\nYour invitation to $ifirst $ilast " .
+			"has been verifies.\r\nYou can send them files now." .
+			"\r\n\r\n--\r\n\r\n$hipaa"
 		);
 
 		$transport = new SmtpTransport();

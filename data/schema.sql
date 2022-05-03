@@ -11,7 +11,7 @@ CREATE TABLE members (
 	company_id INTEGER NOT NULL,
 	is_admin INTEGER,
 	is_editor INTEGER,
-	inviter TEXT,
+	inviter INTEGER,
 	r_admin INTEGER,
 	r_editor INTEGER,
 	ip_address TEXT

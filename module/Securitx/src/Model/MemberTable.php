@@ -68,6 +68,7 @@ class MemberTable {
 			'u_key' => $member->u_key,
 			'verified' => $member->verified,
 			'moddate' => time(),
+			'inviter' => $member->inviter,
 			'is_admin' => $member->is_admin,
 			'is_editor' => $member->is_editor,
 			'ip_address' => $member->ip_address,

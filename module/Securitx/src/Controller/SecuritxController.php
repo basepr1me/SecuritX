@@ -97,6 +97,7 @@ class SecuritxController extends AbstractActionController {
 		}
 
 		$inviter = $member->first . " " .$member->last;
+		$inviter_id = $member->id;
 		$m_key = $member->u_key;
 		$form = new MemberForm('invite', $this->recaptcha);
 		$companies = $this->company_table->fetchAll();
@@ -177,14 +178,14 @@ class SecuritxController extends AbstractActionController {
 			]
 		);
 
-		$member->inviter = $inviter;
+		$member->inviter = $inviter_id;
 		$this->member_table->saveMember($member);
 		$company =
 		    $this->company_table->getCompany($member->company_id);
 
 		$emailer = new Emailer($this->email_host);
 		$emailer->sendInviteEmail($member->email, $member->first,
-		    $member->last, $member->v_key, $url, $this->hipaa['notice'],
+		    $member->last, $url, $this->hipaa['notice'],
 		    $company->name, $inviter);
 
 		return new ViewModel([
@@ -213,14 +214,6 @@ class SecuritxController extends AbstractActionController {
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
 		$member = $this->getMember();
-		if (!$member->is_admin) {
-			return $this->redirect()->toRoute('securitx',
-				array(
-					'action' => 'home',
-					'id' => $member->u_key,
-				)
-			);
-		}
 		return new ViewModel();
 	}
 	public function downloadAction() {
@@ -282,7 +275,7 @@ class SecuritxController extends AbstractActionController {
 			    $this->company_table->getCompany($member->company_id);
 			$emailer = new Emailer($this->email_host);
 			$emailer->sendMemberEmail($member->email, $member->first,
-			    $member->last, $member->v_key, $url, $company->name,
+			    $member->last, $url, $company->name,
 			    $this->hipaa['notice']);
 			return new ViewModel([
 				'completed' => true,
@@ -385,7 +378,7 @@ class SecuritxController extends AbstractActionController {
 					company_id INTEGER NOT NULL,
 					is_admin INTEGER,
 					is_editor INTEGER,
-					inviter TEXT,
+					inviter INTEGER,
 					r_admin INTEGER,
 					r_editor INTEGER,
 					ip_address TEXT
@@ -587,8 +580,8 @@ class SecuritxController extends AbstractActionController {
 			);
 			$emailer = new Emailer($this->email_host);
 			$emailer->sendVerifyEmail($member->email,
-			    $member->first, $member->last, $member->v_key,
-			    $url, $this->hipaa['notice']);
+			    $member->first, $member->last, $url,
+			    $this->hipaa['notice']);
 
 			$companies = $this->company_table->fetchAll();
 			foreach ($companies as $company)
@@ -687,7 +680,7 @@ class SecuritxController extends AbstractActionController {
 
 		$emailer = new Emailer($this->email_host);
 		$emailer->sendVerifyEmail($member->email, $member->first,
-		    $member->last, $member->v_key, $url, $this->hipaa['notice']);
+		    $member->last, $url, $this->hipaa['notice']);
 
 		$this->member_table->saveMember($member);
 		$company =
@@ -733,8 +726,9 @@ class SecuritxController extends AbstractActionController {
 		);
 
 		$emailer = new Emailer($this->email_host);
+
 		$emailer->sendMemberEmail($member->email, $member->first,
-		    $member->last, $member->v_key, $url, $company->name,
+		    $member->last, $url, $company->name,
 		    $this->hipaa['notice']);
 
 		$this->member_table->saveMember($member);
@@ -742,6 +736,22 @@ class SecuritxController extends AbstractActionController {
 			    $member->u_key;
 		if (!is_dir($folder))
 			mkdir($folder, 0755, true);
+
+		if ($member->inviter) {
+			$inviter = new Member('member');
+			try {
+				$inviter =
+				    $this->member_table->getMember(
+					$member->inviter
+				    );
+			} catch (\InvalidArgumentException $ex) {
+				return $this->redirect()->toRoute('securitx');
+			}
+			$emailer->sendInviterEmail($inviter->email,
+			    $inviter->first, $inviter->last, $member->first,
+			    $member->last, $this->hipaa['notice']);
+		}
+
 		return new ViewModel([
 			'company' => $company->name,
 			'first' => $member->first,

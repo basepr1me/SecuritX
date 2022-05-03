@@ -20,6 +20,7 @@ class Member implements InputFilterAwareInterface {
 	public $u_key;
 	public $verified;
 	public $moddate;
+	public $inviter;
 	public $is_admin;
 	public $is_editor;
 	public $ip_address;
@@ -37,6 +38,7 @@ class Member implements InputFilterAwareInterface {
 		$this->u_key	= !empty($data['u_key']) ? $data['u_key'] : null;
 		$this->verified	= !empty($data['verified']) ? $data['verified'] : null;
 		$this->moddate	= !empty($data['moddate']) ? $data['moddate'] : null;
+		$this->inviter = !empty($data['inviter']) ? $data['inviter'] : null;
 		$this->is_admin = !empty($data['is_admin']) ? $data['is_admin'] : 0;
 		$this->is_editor = !empty($data['is_editor']) ? $data['is_editor'] : 0;
 		$this->ip_address = !empty($data['ip_address']) ? $data['ip_address'] : 0;
