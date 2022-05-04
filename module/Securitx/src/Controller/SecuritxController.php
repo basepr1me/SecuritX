@@ -26,6 +26,8 @@ use Laminas\I18n\Validator\PhoneNumber;
 
 use Laminas\Db\Adapter\Adapter;
 
+use Laminas\Crypt\FileCipher;
+
 use InvalidArgumentException;
 
 class SecuritxController extends AbstractActionController {

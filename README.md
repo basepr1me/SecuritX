@@ -4,6 +4,10 @@
 SecuritX is a simple and secure document uploader for easy sharing of protected
 health information. Developed on OpenBSD.
 
+THIS SOFTWARE IS NOT READY TO BE CLONED. Please wait for release. The
+functionality is not completed. When all functionality is completed, then
+releases will occur.
+
 ## httpd
 
 ```bash
