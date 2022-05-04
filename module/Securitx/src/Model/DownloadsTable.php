@@ -14,40 +14,18 @@ class DownloadsTable {
 		return $this->tableGateway->select();
 	}
 	public function getCount($u_key) {
-		return $this->tableGateway->select()->count(['u_key' => $u_key]);
+		return $this->tableGateway->select(['u_key' => $u_key])->count();
 	}
-	/* public function getCompany($id) { */
-	/* 	$id = (int)$id; */
-	/* 	$rowset = $this->tableGateway->select(['company_id' => $id]); */
-	/* 	$row = $rowset->current(); */
-	/* 	if (!$row) { */
-	/* 		throw new RuntimeException(sprintf( */
-	/* 		    'Could not find company row with id %d', $id)); */
-	/* 	} */
-	/* 	return $row; */
-	/* } */
-	/* public function saveCompany(Company $company) { */
-	/* 	$data = [ */
-	/* 		'name' => $company->name, */
-	/* 		'short' => $company->short, */
-	/* 		'domain' => $company->domain, */
-	/* 		'phone' => $company->phone, */
-	/* 		'downloads' => $company->downloads, */
-	/* 		'is_admin' => $company->is_admin, */
-	/* 	]; */
+	public function getDownloads($u_key) {
+		return $this->tableGateway->select()(['u_key' => $u_key]);
+	}
+	public function saveDownload(Downloads $download) {
+		$data = [
+			'moddate' => time(),
+			'id_key' => $download->id_key,
+			'u_key' => $download->u_key,
+		];
 
-	/* 	$id = (int)$company->company_id; */
-	/* 	if ($id === 0) { */
-	/* 		$this->tableGateway->insert($data); */
-	/* 		return; */
-	/* 	} */
-
-	/* 	try { */
-	/* 		$this->getMember($id); */
-	/* 	} catch (RuntimeException $e) { */
-	/* 		return; */
-	/* 	} */
-
-	/* 	$this->tableGateway->update($data, ['id' => $id]); */
-	/* } */
+		$this->tableGateway->insert($data);
+	}
 }

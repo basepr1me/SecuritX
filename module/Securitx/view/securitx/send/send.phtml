@@ -1,10 +1,100 @@
 <?php
-	$this->headTitle('SecuritX: Send Files');
+$this->headTitle('SecuritX: Sender');
 ?>
 <div class="jumbotron">
-	<h1 class="display-4">Welcome to SecuritX</h1>
-
-	<p>Congratulations! You've reached your SecuritX file sender!</p>
+	<h1 class="display-4">Sender</h1>
+	<p>Hello, <?= $first ?>.<br />
+	Combined filesize of selected documents may not exceed <b>500 MB</b>.<br />
+	A maximum of 20 files may be selected for upload.
 
 	<hr class="my-4">
+<?php
+	$m_opts = array();
+	$m_count = 0;
+	foreach ($members as $member) {
+		if ($member->id === $id)
+			continue;
+		$m_opt = [
+			'value' => $member->u_key,
+			'label' => $this->escapeHtml("
+				$member->first $member->last, $member->email, 
+				$member->office
+			"),
+		];
+		array_push($m_opts, $m_opt);
+		if ($member->verified)
+			$m_count++;
+	}
+	if (!$m_count) {
+		echo "There are currently no SecuritX members for you to send files to.<br />";
+		echo "<br /><p><a class=\"a a-pad\" href=\"/securitx/home/$u_key\">Go home</a></p>";
+		return;
+	}
+	sort($m_opts);
+	$submit = $form->get('submit');
+	$submit->setAttribute('class', 'btn btn-primary');
+
+	$form->prepare();
+	$fileElement = $form->get("sender");
+
+	$member_id = $form->get('member_id');
+	$member_id->setAttribute('class', 'form-control');
+	$member_id->setAttribute('placeholder', 'Select Member To Receive Documents (Name, Email, Office)');
+	$member_id->setValueOptions($m_opts);
+
+	echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+		<?= $this->formLabel($fileElement) ?>
+		<div class="form-element">
+			<?= $this->formFile($fileElement) ?>
+			<?= $this->formElementErrors($fileElement) ?>
+		</div>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($member_id) ?>
+	<?= $this->formElement($member_id) ?>
+	<?= $this->formElementErrors()->render($member_id,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<?= $this->formSubmit($form->get('submit')) ?>
+	<div id="progress" class="help-block">
+		<p>&nbsp;</p>
+	</div>
+<?= $this->form()->closeTag() ?>
+	<br /><p><a class="a a-pad" href="/securitx/home/<?= $u_key ?>">Go home</a></p>
 </div>
+<script src="/js/jquery-3.5.1.min.js"></script>
+<script src="/js/jquery.form.min.js"></script>
+<script>
+$(function() {
+	$('#sender').on('submit', function(e) {
+		e.preventDefault();
+
+		if ($('#pdf-files').val() == '') {
+			$('#progress > p').html("Select some files first");
+			return;
+		}
+
+		$(this).ajaxSubmit({
+			beforeSubmit: function(arr, $form, options) {
+				$('#progress > p').html('Uploading...');
+				$('#submitbutton').prop('disabled', true);
+				$('#pdf-files').prop('disabled', true);
+				arr.push({ name: "isAjax", value: "1" });
+			},
+			success: function (response, statusText, xhr, $form) {
+				$('#progress > p').html("Finished Processing");
+				$('#submitbutton').prop('disabled', false);
+				$('#pdf-files').prop('disabled', false);
+				var fileInput = $('#pdf-files');
+				fileInput.replaceWith(fileInput.val('').clone(true));
+				$('#sender')[0].reset();
+			},
+			error: function(a, b, c) {
+				console.log(a, b, c);
+			},
+		});
+	});
+});
+</script>

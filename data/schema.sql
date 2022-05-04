@@ -29,6 +29,8 @@ CREATE TABLE companies (
 
 CREATE TABLE downloads (
 	downloads_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	moddate NUMERIC NOT NULL,
 	id_key UUID,
-	u_key UUID
+	u_key UUID,
+	downloaded INTEGER
 );

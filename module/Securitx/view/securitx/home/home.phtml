@@ -8,22 +8,31 @@
 
 	<hr class="my-4">
 <?php	if ($member->is_admin) { ?>
-		<p><a class="btn btn-secondary btn-lg" style="width: 250px" href="/securitx/companies/<?= $member->u_key ?>">Edit companies &raquo;</a></p>
+		<p><a class="btn btn-secondary btn-lg" href="/securitx/companies/<?= $member->u_key ?>">Edit companies &raquo;</a></p>
 <?php	} ?>
 <?php if ($member->is_admin || $member->is_editor) { ?>
-		<p><a class="btn btn-secondary btn-lg" href="/securitx/invite/<?= $member->u_key ?>">Invite user &raquo;</a></p>
-		<p><a class="btn btn-secondary btn-lg" href="/securitx/send/<?= $member->u_key ?>">Send files &raquo;</a></p>
+		<p><a class="btn btn-secondary btn-lg" href="/securitx/invite/<?= $member->u_key ?>">Invite a member &raquo;</a></p>
+<?php	}
+	if ($member->is_admin || $member->is_editor) { ?>
+		<p><a class="btn btn-secondary btn-lg" href="/securitx/send/<?= $member->u_key ?>">Send files to a member &raquo;</a></p>
+<?php
+		if ($c_downloads) { ?>
+	<p><a class="btn btn-secondary btn-lg" href="/securitx/c_download/<?= $member->u_key ?>">Download available company files &raquo;</a></p>
+<?php		}
+	}
+	if ($has_downloads) { ?>
+	<p><a class="btn btn-secondary btn-lg" href="/securitx/download/<?= $member->u_key ?>">Download available personal files &raquo;</a></p>
+<?php	}
+	if ($member->inviter) { ?>
+		<p><a class="btn btn-secondary btn-lg" href="/securitx/send/<?= $member->u_key ?>">Send files to <?= $inviter ?> &raquo;</a></p>
 <?php	}
 	if (!$member->is_admin && !$member->is_editor) { ?>
-		<p><a class="btn btn-secondary btn-lg" href="/securitx/upload/<?= $member->u_key ?>">Upload files &raquo;</a></p>
+		<p><a class="btn btn-secondary btn-lg" href="/securitx/upload/<?= $member->u_key ?>">Upload files to <?= $company ?> &raquo;</a></p>
 <?php	} ?>
 
-
-		<p><a class="btn btn-secondary btn-lg" style="width: 250px" href="/securitx/user/<?= $member->u_key ?>">Edit my profile &raquo;</a></p>
-
-<?php	if ($has_downloads) { ?>
-	<p><a class="btn btn-secondary btn-lg" href="/securitx/download/<?= $member->u_key ?>">Download files &raquo;</a></p>
-<?php	} ?>
+<!--/*
+		<p><a class="btn btn-secondary btn-lg" href="/securitx/user/<?= $member->u_key ?>">Edit my profile &raquo;</a></p>
+*/-->
 
 	<hr class="my-4">
 <p>

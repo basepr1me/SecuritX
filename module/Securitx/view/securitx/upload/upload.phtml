@@ -54,7 +54,8 @@ $(function() {
 				$('#submitbutton').prop('disabled', false);
 				$('#pdf-files').prop('disabled', false);
 				var fileInput = $('#pdf-files');
-				fileInput.replaceWith( fileInput.val('').clone(true));
+				fileInput.replaceWith(fileInput.val('').clone(true));
+				$('#<?= $short ?>')[0].reset();
 			},
 			error: function(a, b, c) {
 				console.log(a, b, c);

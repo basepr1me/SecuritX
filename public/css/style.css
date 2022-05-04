@@ -9,11 +9,11 @@
 .btn-primary {
 	background-color: var(--brand-color);
 	border-color: var(--brand-color);
-	width: 250px;
+	width: 420px;
 }
 
 .btn-secondary {
-	width: 250px;
+	width: 420px;
 }
 
 .help-block {

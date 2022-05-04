@@ -41,7 +41,7 @@ class CompanyForm extends Form {
 			'name' => 'downloads',
 			'type' => 'checkbox',
 			'options' => [
-				'label' => 'Enable Downloads',
+				'label' => 'Enable Browser Downloads',
 				'use_hidden_element' => true,
 				'checked_value' => '1',
 				'unchecked_value' => '0',

@@ -13,6 +13,7 @@ use Securitx\Form\MemberForm;
 use Securitx\Form\UploaderForm;
 use Securitx\Form\CompanyForm;
 use Securitx\Form\ForgotForm;
+use Securitx\Form\SendForm;
 
 use Laminas\Mvc\InjectApplicationEventInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -197,18 +198,90 @@ class SecuritxController extends AbstractActionController {
 		]);
 	}
 	public function sendAction() {
+		$invited = 0;
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
-		$member = $this->getMember();
-		if (!$member->is_admin || !$member->is_editor) {
+		$admin = $this->getMember();
+		if ($admin->inviter)
+			$invited = 1;
+		else if (!$admin->is_editor || !$admin->is_editor) {
 			return $this->redirect()->toRoute('securitx',
 				array(
 					'action' => 'home',
-					'id' => $member->u_key,
+					'id' => $admin->u_key,
 				)
 			);
 		}
-		return new ViewModel();
+
+		if ($invited) {
+			$members = array();
+			$member =
+			$this->member_table->getMember($admin->inviter);
+			array_push($members, $member);
+		} else
+			$members = $this->member_table->fetchAll();
+		$companies = $this->company_table->fetchAll();
+		$form = new SendForm("sender", "sender");
+		$request = $this->getRequest();
+
+		if (!$request->isPost()) {
+			return new ViewModel([
+				'form' => $form,
+				'id' => $admin->id,
+				'u_key' => $admin->u_key,
+				'members' => $members,
+				'first' => $admin->first,
+			]);
+		}
+
+		$post = array_merge_recursive(
+			$request->getPost()->toArray(),
+			$request->getFiles()->toArray()
+		);
+
+		$form->setData($post);
+		if ($form->isValid()) {
+			$data = $form->getData();
+			$member = $this->member_table->getVMember(
+			    $data['member_id']);
+			$company = $this->company_table->getCompany(
+			    $member->company_id);
+			foreach($data['sender'] as $key=>$item) {
+				$new_name = str_replace("tmp",
+				    $data['member_id'], $item['tmp_name']);
+				rename($item['tmp_name'], $new_name);
+				$download = new Downloads();
+				$download->id_key = basename($new_name, ".pdf");
+				$download->u_key = $member->u_key;
+				$this->downloads_table->
+				    saveDownload($download);
+			}
+			$emailer = new Emailer($this->email_host);
+			if ($invited)
+				$company->name = "$admin->first $admin->last";
+			$emailer->sendDownloadEmail($member->email,
+			    $member->first, $member->last,
+			    $this->hipaa['notice'], $company->name);
+			if (!empty($post['isAjax'])) {
+				return new JsonModel(array(
+					'status'   => true,
+					'formData' => $data,
+					'form' => $form,
+					'id' => $admin->id,
+					'u_key' => $admin->u_key,
+					'members' => $members,
+					'first' => $admin->first,
+				));
+			}
+		}
+
+		return new ViewModel([
+			'form' => $form,
+			'id' => $admin->id,
+			'u_key' => $admin->u_key,
+			'members' => $members,
+			'first' => $admin->first,
+		]);
 	}
 	public function userAction() {
 		if (!$this->checkAnyAdmin())
@@ -338,10 +411,19 @@ class SecuritxController extends AbstractActionController {
 				$has_editor = 0;
 		}
 
+		$inviter = "";
+		if ($member->inviter) {
+			$admin =
+			    $this->member_table->getMember($member->inviter);
+			$inviter = "$admin->first $admin->last";
+		}
 		$has_downloads =
 		    $this->downloads_table->getCount($member->u_key);
 		return new ViewModel([
 			'member' => $member,
+			'company' => $company->name,
+			'c_downloads' => $company->downloads,
+			'inviter' => $inviter,
 			'has_admin' => $has_admin,
 			'has_editor' => $has_editor,
 			'has_downloads' => $has_downloads
@@ -400,7 +482,8 @@ class SecuritxController extends AbstractActionController {
 					downloads_id INTEGER PRIMARY KEY AUTOINCREMENT,
 					moddate NUMERIC NOT NULL,
 					id_key UUID NOT NULL,
-					u_key UUID NOT NULL
+					u_key UUID NOT NULL,
+					downloaded INTEGER
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
 		}
@@ -485,6 +568,9 @@ class SecuritxController extends AbstractActionController {
 			$this->company_table->saveCompany($company);
 			$folder = realpath(getcwd()) . "/data/uploads/" .
 			    $company->short;
+			if (!is_dir($folder))
+				mkdir($folder, 0755, true);
+			$folder = realpath(getcwd()) . "/data/downloads/tmp/";
 			if (!is_dir($folder))
 				mkdir($folder, 0755, true);
 			$co_added = 1;
@@ -794,7 +880,7 @@ class SecuritxController extends AbstractActionController {
 		$form->setData($post);
 		if ($form->isValid()) {
 			$data = $form->getData();
-			if (! empty($post['isAjax'])) {
+			if (!empty($post['isAjax'])) {
 				return new JsonModel(array(
 					'status'   => true,
 					'formData' => $data,

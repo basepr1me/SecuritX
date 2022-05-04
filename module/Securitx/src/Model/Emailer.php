@@ -90,8 +90,30 @@ class Emailer {
 		$message->setSubject('Your SecuritX Invitation');
 		$message->setBody(
 			"Hello $first,\r\n\r\nYour invitation to $ifirst $ilast " .
-			"has been verifies.\r\nYou can send them files now." .
+			"has been verified.\r\nYou can send them files now." .
 			"\r\n\r\n--\r\n\r\n$hipaa"
+		);
+
+		$transport = new SmtpTransport();
+		$options = new SmtpOptions([
+			'name' => $this->hostname,
+			'host' => $this->ip,
+		]);
+		$transport->setOptions($options);
+		$transport->send($message);
+	}
+	public function sendDownloadEmail($email, $first, $last, $hipaa,
+	    $company) {
+		$message = new Message();
+		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
+		$message->addTo("$email", "$first $last");
+		$message->addReplyTo('no-reply@' . $this->hostname, 'SecuritX');
+		$message->setSubject('Your SecuritX Message');
+		$message->setBody(
+			"Hello $first,\r\n\r\n$company has sent you new files " .
+			"to download. Please go to your private SecuritX home " .
+			"page and select 'Download files.' These files will " .
+			"expire in 5 days. Thanks you!\r\n\r\n--\r\n\r\n$hipaa"
 		);
 
 		$transport = new SmtpTransport();
