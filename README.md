@@ -41,6 +41,11 @@ make pretty later:
 
 installation instructions
 
+php.ini set:
+upload_max_filesize = 500M
+post_max_size = 500M
+max_file_uploads = 20
+
 chmod -R 777 /var/www/securitx/data
 chown -R www:www /var/www/securitx/data
 

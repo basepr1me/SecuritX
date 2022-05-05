@@ -5,8 +5,8 @@
 	<h1 class="display-4">Uploader</h1>
 	<p>Hello, <?= $first ?>.<br />
 	Use the form below to upload files to <?= $company ?>.<br />
-	Combined filesize of selected documents may not exceed <b>500 MB</b>.<br />
-	A maximum of 20 files may be selected for upload.
+	Combined filesize of selected documents may not exceed <b><?= ini_get('upload_max_filesize') ?></b>.<br />
+	A maximum of <?= ini_get('max_file_uploads') ?> files may be selected for upload.
 
 	<hr class="my-4">
 <?php
