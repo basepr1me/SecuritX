@@ -40,6 +40,17 @@ cp -p /bin/sh /var/www/bin
 make pretty later:
 
 installation instructions
+
+chmod -R 777 /var/www/securitx/data
+chown -R www:www /var/www/securitx/data
+
+chmod 1777 /var/www/tmp
+chmod 1777 /var/www/securitx/data/downloads/tmp
+
+fstab:
+swap /var/www/securitx/data/downloads/tmp mfs rw,nodev,nosuid,-s500M 0 0
+swap /var/www/tmp mfs rw,nodev,nosuid,-s500M 0 0
+
 upgrade instructions
 edit emailhost in config/autoload/global.php
 The src/Form/MemberForm.php document requires reCAPTCHA keys.
