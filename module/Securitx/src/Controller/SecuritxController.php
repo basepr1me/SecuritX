@@ -879,6 +879,7 @@ class SecuritxController extends AbstractActionController {
 			return new ViewModel([
 				'form' => $form,
 				'company' => $company->name,
+				'u_key' => $member->u_key,
 				'short' => $company->short,
 				'first' => $member->first,
 			]);
@@ -917,7 +918,7 @@ class SecuritxController extends AbstractActionController {
 					'formData' => $data,
 					'form' => $form,
 					'id' => $admin->id,
-					'u_key' => $admin->u_key,
+					'u_key' => $member->u_key,
 					'members' => $members,
 					'first' => $admin->first,
 				));
