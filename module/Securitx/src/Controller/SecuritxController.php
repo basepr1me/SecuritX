@@ -408,9 +408,6 @@ class SecuritxController extends AbstractActionController {
 		$member->moddate = time();
 		$this->member_table->saveMember($member);
 
-		$has_admin = 1;
-		$has_editor = 1;
-
 		/* check member domain */
 		$company =
 		    $this->company_table->getCompany($member->company_id);
@@ -420,12 +417,6 @@ class SecuritxController extends AbstractActionController {
 			$has_domain = 1;
 		else
 			$has_domain = 0;
-		if ($has_domain) {
-			if (!$member->is_admin)
-				$has_admin = 0;
-			if (!$member->is_editor)
-				$has_editor = 0;
-		}
 
 		$inviter = "";
 		if ($member->inviter) {
@@ -444,9 +435,8 @@ class SecuritxController extends AbstractActionController {
 			'company' => $company->name,
 			'c_downloads' => $c_has_downloads,
 			'inviter' => $inviter,
-			'has_admin' => $has_admin,
-			'has_editor' => $has_editor,
-			'has_downloads' => $has_downloads
+			'has_downloads' => $has_downloads,
+			'has_domain' => $has_domain
 		]);
 	}
 	public function indexAction() {

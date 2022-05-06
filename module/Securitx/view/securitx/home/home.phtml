@@ -36,14 +36,25 @@
 
 	<hr class="my-4">
 <p>
-<?php	if (!$has_admin) { ?>
+<?php
+	if ($has_domain && !$member->is_admin) {
+		if ($member->r_admin && !$member->is_admin) {
+			echo "<span class='a a-pad'>Administrator rights have been requested</span>";
+		} else if (!$member->r_admin && !$member->is_admin) {
+?>
+
 	<a class="a a-pad" href="/securitx/requestadmin/<?= $member->u_key ?>">Request administration rights</a>
 <?php
-	if (!$has_editor) {
+			if (!$member->r_editor && !$member->r_admin) {
 ?>
 	 | <a class="a a-pad" href="/securitx/requesteditor/<?= $member->u_key ?>">Request editor rights</a>
+
 <?php
+			} else if ($member->r_editor && !$member->is_editor && !$member->is_admin) {
+				echo "|<span class='a a-pad'>Editor rights have been requested</span>";
+			}
 		}
-	} ?>
+	}
+?>
 </p>
 </div>
