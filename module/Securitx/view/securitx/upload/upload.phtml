@@ -1,11 +1,12 @@
 <?php
+	$limit = str_replace("M", "", ini_get('upload_max_filesize'));
 	$this->headTitle('SecuritX: Upload');
 ?>
 <div class="jumbotron">
 	<h1 class="display-4">Uploader</h1>
 	<p>Hello, <?= $first ?>.<br />
 	Use the form below to upload files to <?= $company ?>.<br />
-	Combined filesize of selected documents may not exceed <b><?= ini_get('upload_max_filesize') ?></b>.<br />
+	Combined filesize of selected documents may not exceed <b><?= $limit ?> MB</b>.<br />
 	A maximum of <?= ini_get('max_file_uploads') ?> files may be selected for upload.
 
 	<hr class="my-4">
@@ -34,6 +35,16 @@
 <script src="/js/jquery.form.min.js"></script>
 <script>
 $(function() {
+	$('#pdf-files').bind('change', function() {
+		var size = 0;
+		var limit = 1024000 * <?= $limit ?>;
+		for (i = 0; i < this.files.length; i++)
+			size += this.files[i].size;
+		if (size > limit) {
+			$('#progress > p').html('Size limit exceeded!');
+			$('#<?= $short ?>')[0].reset();
+		}
+	});
 	$('#<?= $short ?>').on('submit', function(e) {
 		e.preventDefault();
 
