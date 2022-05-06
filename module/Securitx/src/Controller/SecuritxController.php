@@ -427,7 +427,7 @@ class SecuritxController extends AbstractActionController {
 		    $this->downloads_table->getCount($member->u_key);
 		$c_has_downloads = 0;
 		if ($company->downloads)
-			if ($this->downloads_table->getCountC($member->company_id))
+			if ($this->downloads_table->getCCount($member->company_id))
 				$c_has_downloads = 1;
 		return new ViewModel([
 			'member' => $member,
