@@ -295,11 +295,21 @@ class SecuritxController extends AbstractActionController {
 		$member = $this->getMember();
 		return new ViewModel();
 	}
+	public function cdownloadAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		$member = $this->getMember();
+		return new ViewModel(array(
+			'u_key' => $member->u_key,
+		));
+	}
 	public function downloadAction() {
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
 		$member = $this->getMember();
-		return new ViewModel();
+		return new ViewModel(array(
+			'u_key' => $member->u_key,
+		));
 	}
 	public function forgotAction() {
 		if (!$this->checkAnyAdmin())

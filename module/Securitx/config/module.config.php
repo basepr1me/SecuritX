@@ -50,6 +50,7 @@ return [
             		'securitx/securitx/upload'	=> __DIR__ . '/../view/securitx/upload/upload.phtml',
             		'securitx/securitx/home'	=> __DIR__ . '/../view/securitx/home/home.phtml',
             		'securitx/securitx/download'	=> __DIR__ . '/../view/securitx/download/download.phtml',
+            		'securitx/securitx/cdownload'	=> __DIR__ . '/../view/securitx/cdownload/cdownload.phtml',
             		'securitx/securitx/send'	=> __DIR__ . '/../view/securitx/send/send.phtml',
             		'securitx/securitx/invite'	=> __DIR__ . '/../view/securitx/invite/invite.phtml',
             		'securitx/securitx/companies'	=> __DIR__ . '/../view/securitx/companies/companies.phtml',
