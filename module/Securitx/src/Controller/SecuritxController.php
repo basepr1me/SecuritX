@@ -251,10 +251,14 @@ class SecuritxController extends AbstractActionController {
 			foreach($data['sender'] as $key=>$item) {
 				$new_name = str_replace("tmp",
 				    $data['member_id'], $item['tmp_name']);
-				rename($item['tmp_name'], $new_name);
+				$fc = new FileCipher;
 				$download = new Downloads();
 				$download->id_key = basename($new_name, ".pdf");
 				$download->u_key = $member->u_key;
+				$download->e_key = uniqid();
+				$fc->setKey($download->e_key);
+				$fc->encrypt($item['tmp_name'], $new_name);
+				unlink($item['tmp_name']);
 				$this->downloads_table->
 				    saveDownload($download);
 			}
@@ -266,7 +270,6 @@ class SecuritxController extends AbstractActionController {
 			    $this->hipaa['notice'], $company->name);
 			if (!empty($post['isAjax'])) {
 				return new JsonModel(array(
-					'status'   => true,
 					'formData' => $data,
 					'form' => $form,
 					'id' => $admin->id,
@@ -485,6 +488,7 @@ class SecuritxController extends AbstractActionController {
 					moddate NUMERIC NOT NULL,
 					id_key UUID NOT NULL,
 					u_key UUID NOT NULL,
+					e_key UUID NOT NULL,
 					downloaded INTEGER
 				)
 			', Adapter::QUERY_MODE_EXECUTE);

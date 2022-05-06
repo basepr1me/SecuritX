@@ -46,9 +46,9 @@ return array(
     'Laminas\\Escaper\\' => array($vendorDir . '/laminas/laminas-escaper/src'),
     'Laminas\\DevelopmentMode\\' => array($vendorDir . '/laminas/laminas-development-mode/src'),
     'Laminas\\Db\\' => array($vendorDir . '/laminas/laminas-db/src'),
+    'Laminas\\Crypt\\' => array($vendorDir . '/laminas/laminas-crypt/src'),
     'Laminas\\Config\\' => array($vendorDir . '/laminas/laminas-config/src'),
     'Laminas\\ComponentInstaller\\' => array($vendorDir . '/laminas/laminas-component-installer/src'),
     'Laminas\\Captcha\\' => array($vendorDir . '/laminas/laminas-captcha/src'),
-    'Interop\\Container\\' => array($vendorDir . '/container-interop/container-interop/src/Interop/Container'),
     'Brick\\VarExporter\\' => array($vendorDir . '/brick/varexporter/src'),
 );

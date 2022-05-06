@@ -20,18 +20,9 @@
             'dev_requirement' => false,
         ),
         'container-interop/container-interop' => array(
-            'pretty_version' => '1.2.0',
-            'version' => '1.2.0.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../container-interop/container-interop',
-            'aliases' => array(),
-            'reference' => '79cbf1341c22ec75643d841642dd5d6acd83bdb8',
             'dev_requirement' => false,
-        ),
-        'container-interop/container-interop-implementation' => array(
-            'dev_requirement' => false,
-            'provided' => array(
-                0 => '^1.2',
+            'replaced' => array(
+                0 => '^1.2.0',
             ),
         ),
         'laminas/laminas-captcha' => array(
@@ -59,6 +50,15 @@
             'install_path' => __DIR__ . '/../laminas/laminas-config',
             'aliases' => array(),
             'reference' => 'e43d13dcfc273d4392812eb395ce636f73f34dfd',
+            'dev_requirement' => false,
+        ),
+        'laminas/laminas-crypt' => array(
+            'pretty_version' => '3.8.0',
+            'version' => '3.8.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../laminas/laminas-crypt',
+            'aliases' => array(),
+            'reference' => '0972bb907fd555c16e2a65309b66720acf2b8699',
             'dev_requirement' => false,
         ),
         'laminas/laminas-db' => array(
@@ -242,12 +242,12 @@
             'dev_requirement' => false,
         ),
         'laminas/laminas-servicemanager' => array(
-            'pretty_version' => '3.10.0',
-            'version' => '3.10.0.0',
+            'pretty_version' => '3.11.2',
+            'version' => '3.11.2.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../laminas/laminas-servicemanager',
             'aliases' => array(),
-            'reference' => 'e52b985909e0940bf22d34f322eb3f48bbef6bd1',
+            'reference' => '8a1f4d53ec93b2e18174f6f186922ef44d11a75a',
             'dev_requirement' => false,
         ),
         'laminas/laminas-session' => array(

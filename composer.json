@@ -22,7 +22,8 @@
         "laminas/laminas-captcha": "^2.11",
         "laminas/laminas-session": "^2.12",
         "laminas/laminas-recaptcha": "^3.4",
-        "laminas/laminas-progressbar": "^2.10"
+        "laminas/laminas-progressbar": "^2.10",
+        "laminas/laminas-crypt": "^3.8"
     },
     "autoload": {
         "psr-4": {

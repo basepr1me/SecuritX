@@ -24,6 +24,7 @@ class DownloadsTable {
 			'moddate' => time(),
 			'id_key' => $download->id_key,
 			'u_key' => $download->u_key,
+			'e_key' => $download->e_key,
 		];
 
 		$this->tableGateway->insert($data);
