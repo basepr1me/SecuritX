@@ -62,7 +62,7 @@ class SendForm extends Form {
 		$fileInput->getFilterChain()->attachByName(
 			'filerenameupload',
 			[
-				'target'=> '/securitx/data/downloads/tmp/file.pdf',
+				'target'=> '/securitx/data/tmp/file.pdf',
 				'randomize' => true,
 			]
 		);

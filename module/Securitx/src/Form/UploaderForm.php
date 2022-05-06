@@ -36,12 +36,25 @@ class UploaderForm extends Form {
 		$fileInput = new InputFilter\FileInput($name);
 		$fileInput->setRequired(true);
 
-		$fileInput->getValidatorChain()
-		    ->attachByName('filemimetype', ['mimeType' => 'application/pdf']);
+		/*
+		 * XXX: some servers save pdfs as mime-type
+		 * application/octet-stream. this validator blocks those
+		 * legitimate pdfs if only application/pdf is set, therefore, we
+		 * have to validate both types, unfortunately.
+		 */
+		$fileInput->getValidatorChain()->attachByName(
+			'filemimetype', [
+				'mimeType' => [
+					'application/pdf',
+					'application/octet-stream',
+				]
+			]
+		);
+
 		$fileInput->getFilterChain()->attachByName(
 			'filerenameupload',
 			[
-				'target'=> '/securitx/data/uploads/' . $name . '/' . $name . '_file.pdf',
+				'target'=> '/securitx/data/tmp/' . $name . '_file.pdf',
 				'randomize' => true,
 			]
 		);

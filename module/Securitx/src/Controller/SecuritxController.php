@@ -250,7 +250,8 @@ class SecuritxController extends AbstractActionController {
 			    $member->company_id);
 			foreach($data['sender'] as $key=>$item) {
 				$new_name = str_replace("tmp",
-				    $data['member_id'], $item['tmp_name']);
+				    "downloads/" . $data['member_id'],
+				    $item['tmp_name']);
 				$fc = new FileCipher;
 				$download = new Downloads();
 				$download->id_key = basename($new_name, ".pdf");
@@ -489,6 +490,7 @@ class SecuritxController extends AbstractActionController {
 					id_key UUID NOT NULL,
 					u_key UUID NOT NULL,
 					e_key UUID NOT NULL,
+					company_id INTEGER,
 					downloaded INTEGER
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
@@ -576,7 +578,7 @@ class SecuritxController extends AbstractActionController {
 			    $company->short;
 			if (!is_dir($folder))
 				mkdir($folder, 0755, true);
-			$folder = realpath(getcwd()) . "/data/downloads/tmp/";
+			$folder = realpath(getcwd()) . "/data/tmp/";
 			if (!is_dir($folder))
 				mkdir($folder, 0755, true);
 			$co_added = 1;
@@ -884,16 +886,36 @@ class SecuritxController extends AbstractActionController {
 		);
 
 		$form->setData($post);
+
 		if ($form->isValid()) {
 			$data = $form->getData();
+			$company = $this->company_table->getCompany(
+				$member->company_id);
+			foreach($data[$company->short] as $key=>$item) {
+				$new_name = str_replace("tmp",
+				    "uploads/$company->short",
+				    $item['tmp_name']);
+				echo $new_name;
+				$fc = new FileCipher;
+				$download = new Downloads();
+				$download->id_key = basename($new_name, ".pdf");
+				$download->u_key = $member->u_key;
+				$download->e_key = uniqid();
+				$download->company_id = $company->company_id;
+				$fc->setKey($download->e_key);
+				$fc->encrypt($item['tmp_name'], $new_name);
+				unlink($item['tmp_name']);
+				$this->downloads_table->
+				    saveDownload($download);
+			}
 			if (!empty($post['isAjax'])) {
 				return new JsonModel(array(
-					'status'   => true,
 					'formData' => $data,
 					'form' => $form,
-					'company' => $company->name,
-					'short' => $company->short,
-					'first' => $member->first,
+					'id' => $admin->id,
+					'u_key' => $admin->u_key,
+					'members' => $members,
+					'first' => $admin->first,
 				));
 			}
 		}

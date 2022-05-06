@@ -25,6 +25,7 @@ class DownloadsTable {
 			'id_key' => $download->id_key,
 			'u_key' => $download->u_key,
 			'e_key' => $download->e_key,
+			'company_id' => $download->company_id,
 		];
 
 		$this->tableGateway->insert($data);
