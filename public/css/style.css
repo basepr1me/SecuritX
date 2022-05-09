@@ -23,3 +23,59 @@
 .a-pad {
 	padding: 0.375rem 0.75rem;
 }
+
+.downloads {
+	width: 100%
+}
+.dfilem {
+	background-color: #77a5d9;
+	width: 33%;
+	padding: 10px;
+	border: 1px solid;
+	font-weight: bold;
+	float: left;
+}
+.mdatem {
+	background-color: #77a5d9;
+	width: 33%;
+	padding: 10px;
+	border: 1px solid;
+	font-weight: bold;
+	float: left;
+}
+.dloadm {
+	background-color: #77a5d9;
+	width: 33%;
+	padding: 10px;
+	border: 1px solid;
+	font-weight: bold;
+	float: left;
+}
+.dfile {
+	background-color: #ffffff;
+	width: 33%;
+	padding: 10px;
+	border: 1px solid;
+	float: left;
+}
+.mdate {
+	background-color: #ffffff;
+	width: 33%;
+	padding: 10px;
+	border: 1px solid;
+	float: left;
+}
+.dload {
+	background-color: #ffffff;
+	width: 33%;
+	padding: 10px;
+	border: 1px solid;
+	float: left;
+}
+.clear {
+	clear:both;
+}
+.strike {
+	text-decoration: line-through;
+	color: #000000;
+}

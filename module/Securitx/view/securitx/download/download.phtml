@@ -1,11 +1,46 @@
 <?php
-	$this->headTitle('SecuritX: Download');
+use Securitx\Model\DownloadsTable;
+use Securitx\Model\Downloads;
+	$this->headTitle('SecuritX: Downloads');
 ?>
+<script>
+	function add_date(name) {
+		document.getElementById(name).innerHTML = "Today";
+		document.getElementById(name+'_a').style.textDecoration = "line-through";
+		document.getElementById(name+'_a').style.color = "#000000";
+	}
+</script>
 <div class="jumbotron">
 	<h1 class="display-4">Welcome to SecuritX</h1>
-
-	<p>You've reached your SecuritX downloader!</p>
-
+	<p>Hello, <?= $first ?>.<br />
+	You've reached your SecuritX personal file downloader!<br />
+	Links are good for five days.</p>
 	<hr class="my-4">
+<div class="downloads">
+	<div class="dfilem">File Name</div>
+	<div class="mdatem">File Sent Date</div>
+	<div class="dloadm">File Downloaded</div>
+	<div class="clear"></div>
+<?php
+	foreach(array_reverse($downloads) as $download) {
+		$date = new DateTime;
+		$date->setTimestamp($download->moddate);
+		$class = "";
+		if ($download->downloaded != 0)
+			$class = "strike";
+
+		echo "<div class='dfile'><a id='" . $download->id_key . "_a' class='$class' onclick='add_date(\"$download->id_key\")' href='/securitx/downloader/$u_key?id=$download->downloads_id&type=p'>$download->id_key.pdf</a></div>";
+		echo "<div class='mdate'>" . $date->format('Y-m-d H:i:s') . "</div>";
+		echo "<div id='$download->id_key' class='dload'>";
+		if ($download->downloaded == 0)
+			echo "No";
+		else {
+			$date->setTimestamp($download->downloaded);
+			echo $date->format('Y-m-d H:i:s');
+		}
+		echo "</div><div class='clear'></div>";
+	}
+?>
+</div>
 	<br /><p><a class="a a-pad" href="/securitx/home/<?= $u_key ?>">Go home</a></p>
 </div>

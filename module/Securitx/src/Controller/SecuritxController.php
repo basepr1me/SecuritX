@@ -28,6 +28,10 @@ use Laminas\Db\Adapter\Adapter;
 
 use Laminas\Crypt\FileCipher;
 
+use Laminas\Http\Client;
+use Laminas\Http\PhpEnvironment\Response;
+
+
 use InvalidArgumentException;
 
 class SecuritxController extends AbstractActionController {
@@ -254,9 +258,12 @@ class SecuritxController extends AbstractActionController {
 				    $item['tmp_name']);
 				$fc = new FileCipher;
 				$download = new Downloads();
+				$download->moddate = time();
 				$download->id_key = basename($new_name, ".pdf");
 				$download->u_key = $member->u_key;
 				$download->e_key = uniqid();
+				$download->downloaded = 0;
+				$download->company_id = 0;
 				$fc->setKey($download->e_key);
 				$fc->encrypt($item['tmp_name'], $new_name);
 				unlink($item['tmp_name']);
@@ -299,16 +306,85 @@ class SecuritxController extends AbstractActionController {
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
 		$member = $this->getMember();
+		$company = $this->company_table->getCompany($member->company_id);
+		$downloads = new Downloads;
+		$downloads = $this->downloads_table->getCDownloads(
+				$company->company_id
+		);
+		$da = array();
+		foreach($downloads as $download)
+			array_push($da, $download);
 		return new ViewModel(array(
+			'first' => $member->first,
 			'u_key' => $member->u_key,
+			'downloads' => $da,
 		));
+	}
+	public function downloaderAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		$member = $this->getMember();
+		if ($_GET) {
+			$download =
+			    $this->downloads_table->getDownload($_GET['id']);
+			$download->downloaded = time();
+			$this->downloads_table->saveDownload($download);
+
+			if ($_GET['type'] == "p") {
+				$file = sprintf('%s/data/downloads/%s/%s.pdf',
+				    realpath(getcwd()), $member->u_key,
+				    $download->id_key);
+
+				$new_name = sprintf('%s/data/tmp/%s.pdf',
+				    realpath(getcwd()), $download->id_key);
+			} else if ($_GET['type'] == "c") {
+				$company = $this->company_table->getCompany(
+						$member->company_id
+					);
+				$file = sprintf('%s/data/uploads/%s/%s.pdf',
+				    realpath(getcwd()), $company->short,
+				    $download->id_key);
+
+				$new_name = sprintf('%s/data/tmp/%s.pdf',
+				    realpath(getcwd()), $download->id_key);
+			}
+			$fc = new FileCipher;
+			$fc->setKey($download->e_key);
+			$fc->decrypt($file, $new_name);
+
+			$client = new Client();
+			$response = new Response();
+			$response->getHeaders()->addHeaders([
+				'Content-Description' => 'File Transfer',
+				'Content-Type' => 'application/pdf',
+				'Content-Disposition' => 'attachment; filename="' . basename($new_name) . '"',
+				'Expires' => '0',
+				'Cache-Control' => 'must-revalidate',
+				'Pragma' => 'public',
+				'Content-Length' => filesize($new_name),
+				'Content-Transfer-Encoding' => 'binary',
+			]);
+			$response->setContent(file_get_contents($new_name));
+
+			unlink($new_name);
+			return $response;
+		}
+		return new ViewModel();
 	}
 	public function downloadAction() {
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
 		$member = $this->getMember();
+		$downloads = new Downloads;
+		$downloads =
+		    $this->downloads_table->getDownloads($member->u_key);
+		$da = array();
+		foreach($downloads as $download)
+			array_push($da, $download);
 		return new ViewModel(array(
+			'first' => $member->first,
 			'u_key' => $member->u_key,
+			'downloads' => $da,
 		));
 	}
 	public function forgotAction() {
@@ -494,8 +570,8 @@ class SecuritxController extends AbstractActionController {
 					id_key UUID NOT NULL,
 					u_key UUID NOT NULL,
 					e_key UUID NOT NULL,
-					company_id INTEGER,
-					downloaded INTEGER
+					company_id INTEGER NOT NULL,
+					downloaded INTEGER NOT NULL
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
 		}
@@ -903,9 +979,11 @@ class SecuritxController extends AbstractActionController {
 				echo $new_name;
 				$fc = new FileCipher;
 				$download = new Downloads();
+				$download->moddate = time();
 				$download->id_key = basename($new_name, ".pdf");
 				$download->u_key = $member->u_key;
 				$download->e_key = uniqid();
+				$download->downloaded = 0;
 				$download->company_id = $company->company_id;
 				$fc->setKey($download->e_key);
 				$fc->encrypt($item['tmp_name'], $new_name);
