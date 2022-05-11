@@ -13,6 +13,27 @@ class Emailer {
 		$this->ip = $email_host['ip'];
 	}
 
+	public function sendTwofa($email, $first, $last, $url, $hipaa, $code) {
+		$message = new Message();
+		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
+		$message->addTo("$email", "$first $last");
+		$message->addReplyTo('no-reply@' . $this->hostname, 'SecuritX');
+		$message->setSubject('Your SecuritX Two Factor Authentication Code');
+		$message->setBody(
+			"Hello $first,\r\n\r\nHere is your two factor " .
+			"authentication code. This code expires in 10 minutes." .
+			"Thank you!\r\n\r\n$code\r\n\r\n" .
+			"--\r\n\r\n$hipaa"
+		);
+
+		$transport = new SmtpTransport();
+		$options = new SmtpOptions([
+			'name' => $this->hostname,
+			'host' => $this->ip,
+		]);
+		$transport->setOptions($options);
+		$transport->send($message);
+	}
 	public function sendVerifyEmail($email, $first, $last, $url, $hipaa) {
 		$message = new Message();
 		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');

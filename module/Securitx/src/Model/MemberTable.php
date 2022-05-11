@@ -67,7 +67,7 @@ class MemberTable {
 			'v_key' => $member->v_key,
 			'u_key' => $member->u_key,
 			'verified' => $member->verified,
-			'moddate' => time(),
+			'moddate' => $member->moddate,
 			'is_admin' => $member->is_admin,
 			'is_editor' => $member->is_editor,
 			'inviter' => $member->inviter,
@@ -75,6 +75,8 @@ class MemberTable {
 			'r_editor' => $member->r_editor,
 			'ip_address' => $member->ip_address,
 			'company_id' => intval($member->company_id),
+			'twofa' => intval($member->twofa),
+			'twofa_moddate' => intval($member->twofa_moddate),
 		];
 
 		$id = (int)$member->id;

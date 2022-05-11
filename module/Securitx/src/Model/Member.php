@@ -27,6 +27,8 @@ class Member implements InputFilterAwareInterface {
 	public $r_editor;
 	public $ip_address;
 	public $company_id;
+	public $twofa;
+	public $twofa_moddate;
 
 	private $inputFilter;
 
@@ -47,6 +49,8 @@ class Member implements InputFilterAwareInterface {
 		$this->r_editor = !empty($data['r_editor']) ? $data['r_editor'] : 0;
 		$this->ip_address = !empty($data['ip_address']) ? $data['ip_address'] : 0;
 		$this->company_id	= !empty($data['company_id']) ? $data['company_id'] : null;
+		$this->twofa	= !empty($data['twofa']) ? $data['twofa'] : null;
+		$this->twofa_moddate	= !empty($data['twofa_moddate']) ? $data['twofa_moddate'] : null;
 	}
 
 	public function setInputFilter(InputFilterInterface $inputFilter) {

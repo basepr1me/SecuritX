@@ -55,6 +55,7 @@ return [
             		'securitx/securitx/invite'	=> __DIR__ . '/../view/securitx/invite/invite.phtml',
             		'securitx/securitx/companies'	=> __DIR__ . '/../view/securitx/companies/companies.phtml',
             		'securitx/securitx/user'	=> __DIR__ . '/../view/securitx/user/user.phtml',
+            		'securitx/securitx/twofa'	=> __DIR__ . '/../view/securitx/twofa/twofa.phtml',
             		'securitx/securitx/forgot'	=> __DIR__ . '/../view/securitx/forgot/forgot.phtml',
             		'securitx/securitx/requestadmin'	=> __DIR__ . '/../view/securitx/requestadmin/requestadmin.phtml',
             		'securitx/securitx/requesteditor'	=> __DIR__ . '/../view/securitx/requesteditor/requesteditor.phtml',

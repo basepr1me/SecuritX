@@ -61,6 +61,24 @@ class SecuritxController extends AbstractActionController {
 		}
 		if (!$member || !$member->verified)
 			return $this->redirect()->toRoute('securitx');
+		if ((time() - $member->moddate) > 60 * 60 * 24) {
+			if ((time() - $member->twofa_moddate) ||
+			    !$member->twofa_moddate) {
+				$member->twofa = rand(1000000, 9999999);
+				$member->twofa_moddate = time();
+				$this->member_table->saveMember($member);
+				$emailer = new Emailer($this->email_host);
+				$emailer->sendTwofa($member->email,
+				    $member->first, $member->last, $url,
+				    $this->hipaa['notice'], $member->twofa);
+			}
+			return $this->redirect()->toRoute('securitx',
+				array(
+					'action' => 'twofa',
+					'id' => $member->u_key,
+				)
+			);
+		}
 
 		$member->moddate = time();
 		$this->member_table->saveMember($member);
@@ -258,7 +276,6 @@ class SecuritxController extends AbstractActionController {
 				    $item['tmp_name']);
 				$fc = new FileCipher;
 				$download = new Downloads();
-				$download->moddate = time();
 				$download->id_key = basename($new_name, ".pdf");
 				$download->u_key = $member->u_key;
 				$download->e_key = uniqid();
@@ -453,6 +470,19 @@ class SecuritxController extends AbstractActionController {
 			]);
 		}
 	}
+	public function twofaAction() {
+		$member = new Member('member');
+		$id = $this->params()->fromRoute('id');
+
+		try {
+			$member = $this->member_table->getVMember($id);
+		} catch (\InvalidArgumentException $ex) {
+			return $this->redirect()->toRoute('securitx');
+		}
+		return new ViewModel([
+			'member' => $member,
+		]);
+	}
 	public function requestadminAction() {
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
@@ -481,7 +511,6 @@ class SecuritxController extends AbstractActionController {
 		if (!$member || !$member->verified)
 			return $this->redirect()->toRoute('securitx');
 
-		$member->moddate = time();
 		$this->member_table->saveMember($member);
 
 		/* check member domain */
@@ -549,7 +578,9 @@ class SecuritxController extends AbstractActionController {
 					inviter INTEGER,
 					r_admin INTEGER,
 					r_editor INTEGER,
-					ip_address TEXT
+					ip_address TEXT,
+					twofa INTEGER,
+					twofa_moddate INTEGER
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
 			$adapter->query('
@@ -883,7 +914,6 @@ class SecuritxController extends AbstractActionController {
 		$member->v_key = '';
 		$member->u_key = uniqid();
 		$member->verified = 1;
-		$member->moddate = time();
 
 		$company =
 		    $this->company_table->getCompany($member->company_id);
@@ -979,7 +1009,6 @@ class SecuritxController extends AbstractActionController {
 				echo $new_name;
 				$fc = new FileCipher;
 				$download = new Downloads();
-				$download->moddate = time();
 				$download->id_key = basename($new_name, ".pdf");
 				$download->u_key = $member->u_key;
 				$download->e_key = uniqid();
