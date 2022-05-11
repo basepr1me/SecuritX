@@ -26,7 +26,7 @@
 	if ($member->inviter) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/send/<?= $member->u_key ?>">Send files to <?= $inviter ?> &raquo;</a></p>
 <?php	}
-	if ($has_domain && !$member->r_admin && !$member->r_editor) {
+	if ($has_domain && !$member->r_admin && !$member->r_editor && !$member->is_admin && !$member->is_editor) {
 		echo "You are an employee of the company. Please request an action below.";
 	}
 	if ($has_domain && !$member->is_admin && !$member->is_editor) {
