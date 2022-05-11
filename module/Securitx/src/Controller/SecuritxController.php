@@ -62,7 +62,7 @@ class SecuritxController extends AbstractActionController {
 		if (!$member || !$member->verified)
 			return $this->redirect()->toRoute('securitx');
 		if ((time() - $member->moddate) > 60 * 60 * 24) {
-			if ((time() - $member->twofa_moddate) ||
+			if ((time() - $member->twofa_moddate) > 60 * 60 * 10 ||
 			    !$member->twofa_moddate) {
 				$member->twofa = rand(1000000, 9999999);
 				$member->twofa_moddate = time();
