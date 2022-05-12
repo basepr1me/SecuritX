@@ -6,14 +6,16 @@
 
 	<p>SecuritX home of <?= $member->first ?> <?= $member->last ?></p>
 
-	<hr class="my-4">
+	<hr class="my-4" \>
 <?php	if ($member->is_admin == 1) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/companies/<?= $member->u_key ?>?add">Add a company &raquo;</a></p>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/companies/<?= $member->u_key ?>?edit">Edit a company &raquo;</a></p>
+<?php		if ($count > 1) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/companies/<?= $member->u_key ?>?delete">Delete a company &raquo;</a></p>
-	<hr class="my-4" \>
-<?php	} ?>
-<?php if ($member->is_admin == 1 || $member->is_editor == 1) { ?>
+<?php		}
+		echo "<hr class='my-4' \>";
+	}
+	if ($member->is_admin == 1 || $member->is_editor == 1) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/invite/<?= $member->u_key ?>">Invite a member &raquo;</a></p>
 <?php	}
 	if ($member->is_admin == 1 || $member->is_editor == 1) { ?>

@@ -26,6 +26,9 @@ class CompanyTable {
 		}
 		return $row;
 	}
+	public function getShortCount($id) {
+		return $this->tableGateway->select(['short' => $id])->count();
+	}
 	public function saveCompany(Company $company) {
 		$data = [
 			'name' => $company->name,

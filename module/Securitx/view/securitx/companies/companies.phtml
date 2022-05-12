@@ -3,8 +3,102 @@
 ?>
 <div class="jumbotron">
 	<h1 class="display-4">Welcome to SecuritX</h1>
-
-	<p>Congratulations! You've reached your SecuritX company editor!</p>
+<?php	if ($completed) { ?>
+	<p>Hello, <?= $member->first ?>.<br />The company has been <?= $action ?>.</p>
 
 	<hr class="my-4">
+
+
+<?php
+		goto done;
+	}
+?>
+	<p>Hello, <?= $member->first ?>.<br />Here, you can <?= $action ?> a company.</p>
+
+	<hr class="my-4">
+<?php
+	$name = $form->get('name');
+	$name->setAttribute('class', 'form-control');
+	$name->setAttribute('placeholder', 'Company Name');
+
+	$short = $form->get('short');
+	$short->setAttribute('class', 'form-control');
+	$short->setAttribute('placeholder', 'Short Name');
+
+	$domain = $form->get('domain');
+	$domain->setAttribute('class', 'form-control');
+	$domain->setAttribute('placeholder', 'Email Domain');
+
+	$phone = $form->get('phone');
+	$phone->setAttribute('class', 'form-control');
+	$phone->setAttribute('placeholder', 'Phone Number');
+
+	$downloads = $form->get('downloads');
+	$downloads->setAttribute('class', 'form-control');
+	$downloads->setAttribute('placeholder',
+	    'Enable Browser Downloads');
+
+	$submit = $form->get('submit');
+	$submit->setAttribute('class', 'btn btn-primary');
+
+
+	$form->setAttribute('action', $this->url('securitx', [
+		'action' => 'companies',
+		'id' => $member->u_key,
+	],
+	[
+		'query' => [
+			$action => '',
+		]
+	]));
+	$form->prepare();
+
+	echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+	<?= $this->formLabel($name) ?>
+	<?= $this->formElement($name) ?>
+	<?= $this->formElementErrors()->render($name,
+	    ['class' => 'help-block']) ?>
+	</div>
+
+	<div class="form-group">
+	<?= $this->formLabel($short) ?>
+	<?= $this->formElement($short) ?>
+	<?= $this->formElementErrors()->render($short,
+	    ['class' => 'help-block']) ?>
+	<p style="color: red"><?= $exists ?></p>
+	</div>
+
+	<div class="form-group">
+	<?= $this->formLabel($phone) ?>
+	<?= $this->formElement($phone) ?>
+	<?= $this->formElementErrors()->render($phone,
+	    ['class' => 'help-block']) ?>
+	<p style="color: red"><?= $valid_phone ?></p>
+	</div>
+
+	<div class="form-group">
+	<?= $this->formLabel($domain) ?>
+	<?= $this->formElement($domain) ?>
+	<?= $this->formElementErrors()->render($domain,
+	    ['class' => 'help-block']) ?>
+	<p style="color: red"><?= $valid_domain ?></p>
+	</div>
+
+	<div class="form-group">
+	<?= $this->formLabel($downloads) ?> (if you plan to enable automatic file handling via other scripting, do not enable this)
+	<div class="form-group-left">
+	<?= $this->formElement($downloads) ?>
+	<?= $this->formElementErrors()->render($downloads,
+	    ['class' => 'help-block']) ?>
+	</div>
+	</div>
+
+<?php
+	echo $this->formSubmit($form->get('submit'));
+	echo $this->form()->closeTag();
+done:
+?>
+	<br /><p><a class="a a-pad" href="/securitx/home/<?= $member->u_key ?>">Go home</a></p>
 </div>

@@ -159,7 +159,132 @@ ret:
 				)
 			);
 		}
-		return new ViewModel();
+		if ($_GET) {
+			if (array_key_exists('add', $_GET))
+				$action = "add";
+			else if (array_key_exists('edit', $_GET))
+				$action = "edit";
+			else if (array_key_exists('delete', $_GET))
+				$action = "delete";
+			else
+				goto ret;
+			$count = $this->company_table->getCount();
+			if ($count == 1 && $action == "delete")
+				goto ret;
+			$form = new CompanyForm();
+			$request = $this->getRequest();
+			if (!$request->isPost()) {
+				return new ViewModel([
+					'member' => $member,
+					'action' => $action,
+					'exists' => '',
+					'form' => $form,
+					'completed' => false,
+					'valid_domain' => '',
+					'valid_phone' => '',
+				]);
+			}
+			$company = new Company();
+			$form->setInputFilter($company->getInputFilter());
+			$form->setData($request->getPost());
+			if (!$form->isValid()) {
+				return new ViewModel([
+					'member' => $member,
+					'action' => $action,
+					'exists' => '',
+					'form' => $form,
+					'completed' => false,
+					'valid_domain' => '',
+					'valid_phone' => '',
+				]);
+			}
+
+			$company->exchangeArray($form->getData());
+			$count = $this->company_table->getShortCount(
+			    $company->short);
+
+			if ($count) {
+				return new ViewModel([
+					'member' => $member,
+					'action' => $action,
+					'exists' => 'Short name already exists',
+					'form' => $form,
+					'completed' => false,
+					'valid_domain' => '',
+					'valid_phone' => '',
+				]);
+			}
+
+			$phone_validator = new PhoneNumber([
+				'country' => 'US',
+				'allow_possible' => true,
+			]);
+			$phone_test = preg_replace('/[\-\+\(\)\s]+/i', '',
+			    $company->phone);
+			if (!$phone_validator->isValid($phone_test)) {
+				return new ViewModel([
+					'member' => $member,
+					'action' => $action,
+					'exists' => '',
+					'form' => $form,
+					'completed' => false,
+					'valid_domain' => '',
+					'valid_phone' => '',
+				]);
+			}
+
+			$validator = new Hostname([
+				'allow' => Hostname::ALLOW_DNS,
+				'useMxCheck' => true,
+				'useDeepMxCheck' => true,
+				'useDomainCheck' => true,
+			]);
+			$validator->setOptions([
+				'domain' => true,
+			]);
+
+			if (!$validator->isValid($company->domain)) {
+				return new ViewModel([
+					'member' => $member,
+					'action' => $action,
+					'exists' => '',
+					'form' => $form,
+					'completed' => false,
+					'valid_domain' => '',
+					'valid_phone' => '',
+				]);
+			}
+			$this->company_table->saveCompany($company);
+
+			if ($action == "add") {
+				$folder = realpath(getcwd()) . "/data/uploads/" .
+				    $company->short;
+				if (!is_dir($folder))
+					mkdir($folder, 0755, true);
+				return new ViewModel([
+					'member' => $member,
+					'action' => 'added',
+					'completed' => true,
+				]);
+			}
+			if ($action == "delete") {
+				/* delete folder here */
+			}
+ret:
+			return $this->redirect()->toRoute('securitx',
+				array(
+					'action' => 'home',
+					'id' => $member->u_key,
+				)
+			);
+		} else {
+			return $this->redirect()->toRoute('securitx',
+				array(
+					'action' => 'home',
+					'id' => $member->u_key,
+				)
+			);
+		}
 	}
 	public function inviteAction() {
 		if (!$this->checkAnyAdmin())
@@ -569,13 +694,13 @@ ret:
 				if ($member->is_admin > 0 || $member->r_admin)
 					goto skip;
 				$member->r_admin = 1;
-			}
-			if (array_key_exists('r_editor', $_GET)) {
+			} else if (array_key_exists('r_editor', $_GET)) {
 				$type = "editor";
 				if ($member->is_editor > 0 || $member->r_editor)
 					goto skip;
 				$member->r_editor = 1;
-			}
+			} else
+				goto skip;
 			$emailer = new Emailer($this->email_host);
 			foreach ($admins as $admin) {
 				$url1 = $this->url()->fromRoute(
@@ -636,13 +761,15 @@ skip:
 		if ($company->downloads)
 			if ($this->downloads_table->getCCount($member->company_id))
 				$c_has_downloads = 1;
+		$count = $this->company_table->getCount();
 		return new ViewModel([
 			'member' => $member,
 			'company' => $company->name,
 			'c_downloads' => $c_has_downloads,
 			'inviter' => $inviter,
 			'has_downloads' => $has_downloads,
-			'has_domain' => $has_domain
+			'has_domain' => $has_domain,
+			'count' => $count,
 		]);
 	}
 	public function indexAction() {
