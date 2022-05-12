@@ -7,13 +7,13 @@
 	<p>SecuritX home of <?= $member->first ?> <?= $member->last ?></p>
 
 	<hr class="my-4">
-<?php	if ($member->is_admin) { ?>
+<?php	if ($member->is_admin == 1) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/companies/<?= $member->u_key ?>">Edit companies &raquo;</a></p>
 <?php	} ?>
-<?php if ($member->is_admin || $member->is_editor) { ?>
+<?php if ($member->is_admin == 1 || $member->is_editor == 1) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/invite/<?= $member->u_key ?>">Invite a member &raquo;</a></p>
 <?php	}
-	if ($member->is_admin || $member->is_editor) { ?>
+	if ($member->is_admin == 1 || $member->is_editor == 1) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/send/<?= $member->u_key ?>">Send files to a member &raquo;</a></p>
 <?php
 		if ($c_downloads) { ?>
@@ -26,13 +26,13 @@
 	if ($member->inviter) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/send/<?= $member->u_key ?>">Send files to <?= $inviter ?> &raquo;</a></p>
 <?php	}
-	if ($has_domain && !$member->r_admin && !$member->r_editor && !$member->is_admin && !$member->is_editor) {
+	if ($has_domain && !$member->r_admin && !$member->r_editor && $member->is_admin == 0 && $member->is_editor == 0) {
 		echo "You are an employee of the company. Please request an action below.";
 	}
-	if ($has_domain && !$member->is_admin && !$member->is_editor && ($member->r_admin || $member->r_editor)) {
+	if ($has_domain && $member->is_admin == 0 && $member->is_editor == 0 && ($member->r_admin || $member->r_editor)) {
 		echo "<br />Please wait for an administrator to review your request";
 	}
-	if (!$member->is_admin && !$member->is_editor && !$has_domain) { ?>
+	if ($member->is_admin == 0 && $member->is_editor == 0 && !$has_domain) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/upload/<?= $member->u_key ?>">Upload files to <?= $company ?> &raquo;</a></p>
 <?php	} ?>
 
@@ -43,20 +43,20 @@
 	<hr class="my-4">
 <p>
 <?php
-	if ($has_domain && !$member->is_admin) {
-		if ($member->r_admin && !$member->is_admin) {
+	if ($has_domain && $member->is_admin == 0) {
+		if ($member->r_admin && $member->is_admin == 0) {
 			echo "<span class='a a-pad'>Administrator rights have been requested</span>";
 		} else if (!$member->r_admin && !$member->is_admin) {
 ?>
 
-	<a class="a a-pad" href="/securitx/requestadmin/<?= $member->u_key ?>">Request administration rights</a>
+	<a class="a a-pad" href="/securitx/home/<?= $member->u_key ?>?r_admin=1">Request administrator rights</a>
 <?php
-			if (!$member->r_editor && !$member->r_admin) {
+			if (!$member->r_editor && !$member->r_admin && $member->is_editor != 2) {
 ?>
-	 | <a class="a a-pad" href="/securitx/requesteditor/<?= $member->u_key ?>">Request editor rights</a>
+	 | <a class="a a-pad" href="/securitx/home/<?= $member->u_key ?>?r_editor=1">Request editor rights</a>
 
 <?php
-			} else if ($member->r_editor && !$member->is_editor && !$member->is_admin) {
+			} else if ($member->r_editor && $member->is_editor == 0 && $member->is_admin == 0) {
 				echo "|<span class='a a-pad'>Editor rights have been requested</span>";
 			}
 		}

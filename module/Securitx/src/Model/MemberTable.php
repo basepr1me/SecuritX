@@ -22,6 +22,9 @@ class MemberTable {
 		$row = $rowset->current();
 		return $row;
 	}
+	public function getAllAdmins() {
+		return $this->tableGateway->select(['is_admin' => 1]);
+	}
 	public function getAnyAdmin() {
 		$rowset = $this->tableGateway->select([
 			'is_admin' => 1,

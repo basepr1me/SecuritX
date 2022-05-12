@@ -95,6 +95,58 @@ class SecuritxController extends AbstractActionController {
 		}
 		return 0;
 	}
+	public function authempAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		$admin = $this->getMember();
+		if (!$admin->is_admin)
+			goto ret;
+		if ($_GET) {
+			if (array_key_exists('member', $_GET))
+				$member = $this->member_table->getVMember(
+				    $_GET['member']);
+			else
+				goto ret;
+			if (!$member)
+				goto ret;
+			if (array_key_exists('type', $_GET))
+				$type = $_GET['type'];
+			else
+				goto ret;
+			if (array_key_exists('action', $_GET))
+				$action = $_GET['action'];
+			else
+				goto ret;
+			if ($action == "allow") {
+				if ($type == "admin")
+					$member->is_admin = 1;
+				else
+					$member->is_editor = 1;
+			} else {
+				if ($type == "admin")
+					$member->is_admin = 2;
+				else
+					$member->is_editor = 2;
+			}
+			$company =
+			    $this->company_table->getCompany($member->company_id);
+			$member->r_admin = 0;
+			$member->r_editor = 0;
+			$this->member_table->saveMember($member);
+
+			$emailer = new Emailer($this->email_host);
+			$emailer->sendAuthEmail($member->email, $member->first,
+			    $member->last, $action, $type,
+			    $company->name, $this->hipaa['notice']);
+		}
+ret:
+		return $this->redirect()->toRoute('securitx',
+			array(
+				'action' => 'home',
+				'id' => $admin->u_key,
+			)
+		);
+	}
 	public function companiesAction() {
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
@@ -499,8 +551,6 @@ class SecuritxController extends AbstractActionController {
 		if (!$member || !$member->verified)
 			return $this->redirect()->toRoute('securitx');
 
-		$this->member_table->saveMember($member);
-
 		/* check member domain */
 		$company =
 		    $this->company_table->getCompany($member->company_id);
@@ -510,6 +560,68 @@ class SecuritxController extends AbstractActionController {
 			$has_domain = 1;
 		else
 			$has_domain = 0;
+
+		if ($_GET && $has_domain) {
+			$admins = $this->member_table->getAllAdmins();
+			if (array_key_exists('r_admin', $_GET)) {
+				$type = "admin";
+				if ($member->is_admin > 0)
+					goto skip;
+				$member->r_admin = 1;
+			}
+			if (array_key_exists('r_editor', $_GET)) {
+				$type = "editor";
+				if ($member->is_editor > 0)
+					goto skip;
+				$member->r_editor = 1;
+			}
+			$emailer = new Emailer($this->email_host);
+			foreach ($admins as $admin) {
+				$url1 = $this->url()->fromRoute(
+					'securitx',
+					[
+						'action' => 'authemp',
+						'id' => $admin->u_key,
+					],
+					[
+						'query' => [
+							'member' => $member->u_key,
+							'type' => $type,
+							'action' => 'allow',
+						],
+					],
+					[
+						'force_canonical' => true,
+					]
+				);
+				$url2 = $this->url()->fromRoute(
+					'securitx',
+					[
+						'action' => 'authemp',
+						'id' => $admin->u_key,
+					],
+					[
+						'query' => [
+							'member' => $member->u_key,
+							'type' => $type,
+							'action' => 'deny',
+						],
+					],
+					[
+						'force_canonical' => true,
+					]
+				);
+				$url1 = "https://" . $_SERVER['SERVER_NAME'] .
+				    $url1;
+				$url2 = "https://" . $_SERVER['SERVER_NAME'] .
+				    $url2;
+				$emailer->sendAdminRequest($admin, $member,
+				    $url1, $url2, $this->hipaa['notice'],
+				    $type);
+			}
+		}
+skip:
+		$this->member_table->saveMember($member);
 
 		$inviter = "";
 		if ($member->inviter) {
@@ -768,7 +880,7 @@ class SecuritxController extends AbstractActionController {
 					'id' => $member->v_key,
 				],
 				[
-				'force_canonical' => true,
+					'force_canonical' => true,
 				]
 			);
 			$emailer = new Emailer($this->email_host);

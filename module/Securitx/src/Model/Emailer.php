@@ -13,6 +13,60 @@ class Emailer {
 		$this->ip = $email_host['ip'];
 	}
 
+	public function sendAuthEmail($email, $first, $last, $action, $type,
+	    $company, $hipaa) {
+		if ($action == "allow")
+			$auth = "authorized";
+		else
+			$auth = "denied";
+		if ($type == "admin")
+			$thetype = "administrator";
+		else
+			$thetype = "editor";
+
+		$message = new Message();
+		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
+		$message->addTo("$email", "$first $last");
+		$message->addReplyTo('no-reply@' . $this->hostname, 'SecuritX');
+		$message->setSubject('Your SecuritX Employee Request');
+		$message->setBody(
+			"Hello $first,\r\n\r\nAn administrator has $auth your " .
+			"request to become an $thetype of $company. Please see ".
+			"your administrator for more details. Thanks!" .
+			"\r\n\r\n--\r\n\r\n$hipaa"
+		);
+
+		$transport = new SmtpTransport();
+		$options = new SmtpOptions([
+			'name' => $this->hostname,
+			'host' => $this->ip,
+		]);
+		$transport->setOptions($options);
+		$transport->send($message);
+	}
+	public function sendAdminRequest($admin, $member, $url1, $url2, $hipaa,
+	    $type) {
+		$message = new Message();
+		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
+		$message->addTo("$admin->email", "$admin->first $admin->last");
+		$message->addReplyTo('no-reply@' . $this->hostname, 'SecuritX');
+		$message->setSubject('SecuritX Employee Request');
+		$message->setBody(
+			"Hello $admin->first,\r\n\r\n$member->first " .
+			"$member->last has requested $type rights.\r\n" .
+			"\r\nApprove\r\n$url1\r\n\r\n" .
+			"\r\nDeny\r\n$url2\r\n\r\n" .
+			"--\r\n\r\n$hipaa"
+		);
+
+		$transport = new SmtpTransport();
+		$options = new SmtpOptions([
+			'name' => $this->hostname,
+			'host' => $this->ip,
+		]);
+		$transport->setOptions($options);
+		$transport->send($message);
+	}
 	public function sendTwofa($email, $first, $last, $url, $hipaa, $code) {
 		$message = new Message();
 		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
