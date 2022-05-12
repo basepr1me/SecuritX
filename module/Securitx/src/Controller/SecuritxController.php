@@ -208,7 +208,7 @@ ret:
 		}
 
 		$member->exchangeArray($form->getData());
-
+		$member->moddate = time();
 		if ($this->member_table->checkMember($member->email,
 			$member->company_id)) {
 			return new ViewModel([
@@ -680,7 +680,8 @@ skip:
 					r_editor INTEGER,
 					ip_address TEXT,
 					twofa INTEGER,
-					twofa_moddate INTEGER
+					twofa_moddate INTEGER,
+					phone INTEGER
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
 			$adapter->query('
@@ -690,8 +691,7 @@ skip:
 					short TEXT NOT NULL,
 					domain TEXT NOT NULL,
 					phone TEXT NOT NULL,
-					downloads INTEGER,
-					is_admin INTEGER
+					downloads INTEGER
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
 			$adapter->query('
@@ -847,7 +847,7 @@ skip:
 			}
 
 			$member->exchangeArray($form->getData());
-
+			$member->moddate = time();
 			$validator = new EmailAddress([
 				'allow' => Hostname::ALLOW_DNS,
 				'useMxCheck' => true,
@@ -999,7 +999,7 @@ skip:
 		}
 
 		$member->exchangeArray($form->getData());
-
+		$member->moddate = time();
 		if ($this->member_table->checkMember($member->email,
 		    $member->company_id)) {
 			return new ViewModel([

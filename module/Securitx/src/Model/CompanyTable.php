@@ -33,7 +33,6 @@ class CompanyTable {
 			'domain' => $company->domain,
 			'phone' => $company->phone,
 			'downloads' => $company->downloads,
-			'is_admin' => $company->is_admin,
 		];
 
 		$id = (int)$company->company_id;

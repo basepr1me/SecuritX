@@ -108,6 +108,10 @@
 		$office->setAttribute('class', 'form-control');
 		$office->setAttribute('placeholder', 'Office Name');
 
+		$phone = $form->get('phone');
+		$phone->setAttribute('class', 'form-control');
+		$phone->setAttribute('placeholder', 'Phone Number');
+
 		$email = $form->get('email');
 		$email->setAttribute('class', 'form-control');
 		$email->setAttribute('placeholder', 'Email Address');
@@ -138,6 +142,12 @@
 	<?= $this->formLabel($office) ?>
 	<?= $this->formElement($office) ?>
 	<?= $this->formElementErrors()->render($office,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<?= $this->formLabel($phone) ?>
+	<?= $this->formElement($phone) ?>
+	<?= $this->formElementErrors()->render($phone,
 	    ['class' => 'help-block']) ?>
 	</div>
 	<div class="form-group">

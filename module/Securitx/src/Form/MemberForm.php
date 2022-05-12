@@ -126,6 +126,13 @@ class MemberForm extends Form {
 			],
 		]);
 		$this->add([
+			'name' => 'phone',
+			'type' => Element\Tel::class,
+			'options' => [
+				'label' => 'Phone Number',
+			],
+		]);
+		$this->add([
 			'name' => 'email',
 			'type' => Element\Email::class,
 			'options' => [

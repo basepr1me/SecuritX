@@ -80,6 +80,7 @@ class MemberTable {
 			'company_id' => intval($member->company_id),
 			'twofa' => intval($member->twofa),
 			'twofa_moddate' => intval($member->twofa_moddate),
+			'phone' => intval($member->phone),
 		];
 
 		$id = (int)$member->id;
