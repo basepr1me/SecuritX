@@ -19,7 +19,10 @@ class DownloadsTable {
 		return $row;
 	}
 	public function getCount($u_key) {
-		return $this->tableGateway->select(['u_key' => $u_key])->count();
+		return $this->tableGateway->select([
+			'u_key' => $u_key,
+			'company_id' => 0,
+		])->count();
 	}
 	public function getCCount($c_id) {
 		return $this->tableGateway->select([
