@@ -329,6 +329,7 @@ ret:
 				    $item['tmp_name']);
 				$fc = new FileCipher;
 				$download = new Downloads();
+				$download->moddate = time();
 				$download->id_key = basename($new_name, ".pdf");
 				$download->u_key = $member->u_key;
 				$download->e_key = uniqid();
@@ -1171,6 +1172,7 @@ skip:
 				echo $new_name;
 				$fc = new FileCipher;
 				$download = new Downloads();
+				$download->moddate = time();
 				$download->id_key = basename($new_name, ".pdf");
 				$download->u_key = $member->u_key;
 				$download->e_key = uniqid();

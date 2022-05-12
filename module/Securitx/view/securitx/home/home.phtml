@@ -8,7 +8,10 @@
 
 	<hr class="my-4">
 <?php	if ($member->is_admin == 1) { ?>
-		<p><a class="btn btn-secondary btn-lg" href="/securitx/companies/<?= $member->u_key ?>">Edit companies &raquo;</a></p>
+		<p><a class="btn btn-secondary btn-lg" href="/securitx/companies/<?= $member->u_key ?>?add">Add a company &raquo;</a></p>
+		<p><a class="btn btn-secondary btn-lg" href="/securitx/companies/<?= $member->u_key ?>?edit">Edit a company &raquo;</a></p>
+		<p><a class="btn btn-secondary btn-lg" href="/securitx/companies/<?= $member->u_key ?>?delete">Delete a company &raquo;</a></p>
+	<hr class="my-4" \>
 <?php	} ?>
 <?php if ($member->is_admin == 1 || $member->is_editor == 1) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/invite/<?= $member->u_key ?>">Invite a member &raquo;</a></p>
@@ -16,6 +19,8 @@
 	if ($member->is_admin == 1 || $member->is_editor == 1) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/send/<?= $member->u_key ?>">Send files to a member &raquo;</a></p>
 <?php
+		if ($c_downloads || $has_downloads)
+			echo "<hr class='my-4' \>";
 		if ($c_downloads) { ?>
 	<p><a class="btn btn-secondary btn-lg" href="/securitx/cdownload/<?= $member->u_key ?>">Download available company files &raquo;</a></p>
 <?php		}
