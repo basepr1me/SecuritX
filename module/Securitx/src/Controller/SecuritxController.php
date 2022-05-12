@@ -14,6 +14,7 @@ use Securitx\Form\UploaderForm;
 use Securitx\Form\CompanyForm;
 use Securitx\Form\ForgotForm;
 use Securitx\Form\SendForm;
+use Securitx\Form\TwofaForm;
 
 use Laminas\Mvc\InjectApplicationEventInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -62,7 +63,7 @@ class SecuritxController extends AbstractActionController {
 		if (!$member || !$member->verified)
 			return $this->redirect()->toRoute('securitx');
 		if ((time() - $member->moddate) > 60 * 60 * 24) {
-			if ((time() - $member->twofa_moddate) > 60 * 60 * 10 ||
+			if ((time() - $member->twofa_moddate) > 60 * 10 ||
 			    !$member->twofa_moddate) {
 				$member->twofa = rand(1000000, 9999999);
 				$member->twofa_moddate = time();
@@ -470,19 +471,6 @@ class SecuritxController extends AbstractActionController {
 			]);
 		}
 	}
-	public function twofaAction() {
-		$member = new Member('member');
-		$id = $this->params()->fromRoute('id');
-
-		try {
-			$member = $this->member_table->getVMember($id);
-		} catch (\InvalidArgumentException $ex) {
-			return $this->redirect()->toRoute('securitx');
-		}
-		return new ViewModel([
-			'member' => $member,
-		]);
-	}
 	public function requestadminAction() {
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
@@ -803,6 +791,68 @@ class SecuritxController extends AbstractActionController {
 			]);
 		}
 
+	}
+	public function twofaAction() {
+		$member = new Member('member');
+		$id = $this->params()->fromRoute('id');
+
+		try {
+			$member = $this->member_table->getVMember($id);
+		} catch (\InvalidArgumentException $ex) {
+			return $this->redirect()->toRoute('securitx');
+		}
+
+		$form = new TwofaForm();
+		if ((time() - $member->twofa_moddate) > 60 * 10)
+	       		$expired = true;
+		else
+			$expired = false;
+		$request = $this->getRequest();
+		if (!$request->isPost()) {
+			return new ViewModel([
+				'member' => $member,
+				'valid' => '',
+				'expired' => $expired,
+				'form' =>  $form,
+			]);
+		}
+		$form->setData($request->getPost());
+		if (!$form->isValid()) {
+			return new ViewModel([
+				'member' => $member,
+				'valid' => '',
+				'expired' => $expired,
+				'form' =>  $form,
+			]);
+		}
+		$data = $form->getData();
+		if (!$data['code']) {
+			return new ViewModel([
+				'member' => $member,
+				'valid' => 'A code is required',
+				'expired' => $expired,
+				'form' =>  $form,
+			]);
+		}
+		if($data['code'] != $member->twofa) {
+			return new ViewModel([
+				'member' => $member,
+				'valid' => 'Incorrect code',
+				'expired' => $expired,
+				'form' =>  $form,
+			]);
+		} else {
+			$member->moddate = time();
+			$member->twofa = '';
+			$member->twofa_moddate = '';
+			$this->member_table->saveMember($member);
+			return $this->redirect()->toRoute('securitx',
+				array(
+					'action' => 'home',
+					'id' => $member->u_key,
+				)
+			);
+		}
 	}
 	public function requestAction() {
 		if (!$this->checkAnyAdmin())

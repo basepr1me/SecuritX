@@ -7,4 +7,35 @@
 	<p>Hello, <?= $member->first ?>,<br />Please enter the code that was emailed to you.<br />If you have not received the email, check your Junk folder.</p>
 
 	<hr class="my-4">
+<?php
+	$code = $form->get('code');
+	$code->setAttribute('class', 'form-control');
+	$code->setAttribute('placeholder', 'Please enter the code you received');
+
+	$submit = $form->get('submit');
+	$submit->setAttribute('class', 'btn btn-primary');
+
+	$form->setAttribute('action', $this->url('securitx',
+	    ['action' => 'twofa', 'id'=> $member->u_key]));
+	$form->prepare();
+
+	echo $this->form()->openTag($form);
+	if (!$expired) {
+?>
+	<div class="form-group">
+	<?= $this->formLabel($code) ?>
+	<?= $this->formElement($code) ?>
+	<?= $this->formElementErrors()->render($code,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<p style="color: red"><?= $valid ?></p>
+	<div class="form-group">
+	<?= $this->formSubmit($form->get('submit')) ?>
+	</div>
+	<br /><p><a class="a a-pad" href="/securitx/home/<?= $member->u_key ?>">Go home</a></p>
+<?php
+	} else {
+		echo "Your code has expired. Please <a class=\"a\" href=\"/securitx/home/$member->u_key\">click here</a> to receive a new code.";
+	}
+?>
 </div>

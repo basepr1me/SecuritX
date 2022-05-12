@@ -29,8 +29,8 @@
 	if ($has_domain && !$member->r_admin && !$member->r_editor && !$member->is_admin && !$member->is_editor) {
 		echo "You are an employee of the company. Please request an action below.";
 	}
-	if ($has_domain && !$member->is_admin && !$member->is_editor) {
-		echo "Please wait for an administrator to review your request";
+	if ($has_domain && !$member->is_admin && !$member->is_editor && ($member->r_admin || $member->r_editor)) {
+		echo "<br />Please wait for an administrator to review your request";
 	}
 	if (!$member->is_admin && !$member->is_editor && !$has_domain) { ?>
 		<p><a class="btn btn-secondary btn-lg" href="/securitx/upload/<?= $member->u_key ?>">Upload files to <?= $company ?> &raquo;</a></p>
