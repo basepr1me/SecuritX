@@ -565,13 +565,13 @@ ret:
 			$admins = $this->member_table->getAllAdmins();
 			if (array_key_exists('r_admin', $_GET)) {
 				$type = "admin";
-				if ($member->is_admin > 0)
+				if ($member->is_admin > 0 || $member->r_admin)
 					goto skip;
 				$member->r_admin = 1;
 			}
 			if (array_key_exists('r_editor', $_GET)) {
 				$type = "editor";
-				if ($member->is_editor > 0)
+				if ($member->is_editor > 0 || $member->r_editor)
 					goto skip;
 				$member->r_editor = 1;
 			}
