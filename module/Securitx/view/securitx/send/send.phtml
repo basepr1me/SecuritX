@@ -1,9 +1,9 @@
 <?php
-	$this->headTitle('SecuritX: Sender');
+	$this->headTitle('SecuritX: Share Files');
 	$limit = str_replace("M", "", ini_get('upload_max_filesize'));
 ?>
 <div class="jumbotron">
-	<h1 class="display-4">Sender</h1>
+	<h1 class="display-4">Share Files</h1>
 	<p>Hello, <?= $first ?>.<br />
 	Combined filesize of selected documents may not exceed <b><?= $limit ?> MB</b>.<br />
 	A maximum of <?= ini_get('max_file_uploads') ?> files may be selected for upload.
