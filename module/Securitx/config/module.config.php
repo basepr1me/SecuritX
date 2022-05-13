@@ -57,6 +57,7 @@ return [
             		'securitx/securitx/user'	=> __DIR__ . '/../view/securitx/user/user.phtml',
             		'securitx/securitx/twofa'	=> __DIR__ . '/../view/securitx/twofa/twofa.phtml',
             		'securitx/securitx/forgot'	=> __DIR__ . '/../view/securitx/forgot/forgot.phtml',
+            		'securitx/securitx/blockdomain'	=> __DIR__ . '/../view/securitx/blockdomain/blockdomain.phtml',
 		],
 		'template_path_stack' => [
 			__DIR__ . '/../view/securitx',

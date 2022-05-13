@@ -1,0 +1,42 @@
+<?php
+	$this->headTitle('SecuritX: Block A Domain');
+?>
+<div class="jumbotron">
+<?php	if ($completed) { ?>
+	<h1 class="display-4">Domain Blocked</h1>
+	<p>Thanks you, <?= $first ?>.<br />
+	Thanks domain is now blocked.</p>
+<?php	return; } else { ?>
+	<h1 class="display-4">Block A Domain</h1>
+	<p>Hello, <?= $first ?>.<br />You can block a domain here.</p>
+<?php	} ?>
+
+	<hr class="my-4" \>
+<?php
+	$domain = $form->get('domain');
+	$domain->setAttribute('class', 'form-control');
+	$domain->setAttribute('placeholder', 'Domain Name');
+
+	$submit = $form->get('submit');
+	$submit->setAttribute('class', 'btn btn-primary');
+
+	$form->setAttribute('action', $this->url('securitx',
+	    ['action' => 'blockdomain', 'id'=> $id]));
+	$form->prepare();
+
+	echo $this->form()->openTag($form);
+?>
+
+	<div class="form-group">
+	<?= $this->formLabel($domain) ?>
+	<?= $this->formElement($domain) ?>
+	<?= $this->formElementErrors()->render($domain,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<p style="color: red"><?= $valid ?></p>
+<?php
+	echo $this->formSubmit($form->get('submit'));
+	echo $this->form()->closeTag();
+?>
+	<br /><p><a class="a a-pad" href="/securitx/home/<?= $id ?>">Go home</a></p>
+</div>

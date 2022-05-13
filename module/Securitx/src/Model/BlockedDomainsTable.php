@@ -15,7 +15,7 @@ class BlockedDomainsTable {
 	}
 	public function saveDomain(BlockedDomains $domain) {
 		$data = [
-			'domain' => $download->domain,
+			'domain' => $domain->domain,
 		];
 
 		$this->tableGateway->insert($data);

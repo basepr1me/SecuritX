@@ -19,6 +19,7 @@ use Securitx\Form\CompanyDeleteForm;
 use Securitx\Form\ForgotForm;
 use Securitx\Form\SendForm;
 use Securitx\Form\TwofaForm;
+use Securitx\Form\BlockDomainForm;
 
 use Laminas\Mvc\InjectApplicationEventInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -100,6 +101,64 @@ class SecuritxController extends AbstractActionController {
 				return 0;
 		}
 		return 0;
+	}
+	public function blockdomainAction() {
+		if (!$this->checkAnyAdmin())
+			return $this->redirect()->toRoute('securitx');
+		$member = $this->getMember();
+		if (!$member->is_admin) {
+			return $this->redirect()->toRoute('securitx',
+				array(
+					'action' => 'home',
+					'id' => $admin->u_key,
+				)
+			);
+		}
+		$form = new BlockDomainForm();
+		$request = $this->getRequest();
+
+		if (!$request->isPost()) {
+			return new ViewModel([
+				'form' => $form,
+				'completed' => false,
+				'first' => $member->first,
+				'id' => $member->u_key,
+				'valid' => '',
+			]);
+		}
+		$form->setData($request->getPost());
+		if (!$form->isValid()) {
+			return new ViewModel([
+				'form' => $form,
+				'completed' => false,
+				'first' => $member->first,
+				'id' => $member->u_key,
+				'valid' => '',
+			]);
+		}
+
+		$domain = new BlockedDomains();
+		$domain->exchangeArray($form->getData());
+		$domains = $this->blockeddomains_table->fetchAll();
+		foreach ($domains as $tdomain) {
+			if ($tdomain->domain == $domain->domain) {
+				return new ViewModel([
+					'form' => $form,
+					'completed' => false,
+					'first' => $member->first,
+					'id' => $member->u_key,
+					'valid' => 'That domain is already blocked',
+				]);
+			}
+		}
+
+		$this->blockeddomains_table->saveDomain($domain);
+		return new ViewModel([
+			'form' => $form,
+			'completed' => true,
+			'first' => $member->first,
+			'valid' => '',
+		]);
 	}
 	public function authempAction() {
 		if (!$this->checkAnyAdmin())
