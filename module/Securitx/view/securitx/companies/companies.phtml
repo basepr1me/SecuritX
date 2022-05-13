@@ -6,16 +6,18 @@
 <?php	if ($completed) { ?>
 	<p>Hello, <?= $member->first ?>.<br />The company has been <?= $action ?>.</p>
 
-	<hr class="my-4">
+	<hr class="my-4" \>
 
 
 <?php
 		goto done;
 	}
 ?>
-	<p>Hello, <?= $member->first ?>.<br />Here, you can <?= $action ?> a company.<br />The primary company can not be deleted.</p>
-
-	<hr class="my-4">
+	<p>Hello, <?= $member->first ?>.<br />Here, you can <?= $action ?> a company.
+<?php	if ($action == "delete") { ?>
+	<br />The primary company can not be deleted.</p>
+<?php	} ?>
+	<hr class="my-4" \>
 
 <?php
 	if ($action == "delete") {
@@ -68,6 +70,128 @@
 <?php
 		echo $this->formSubmit($form->get('submit'));
 		echo $this->form()->closeTag();
+		goto done;
+	}
+	if ($action == "edit" && !$company) {
+		$co_opts = array();
+		foreach ($companies as $company) {
+			$co_opt = [
+				'value' => $company->company_id,
+				'label' => $this->escapeHtml($company->name),
+			];
+			array_push($co_opts, $co_opt);
+		}
+		$company_id = $form->get('company_id');
+		$company_id->setAttribute('class', 'form-control');
+		$company_id->setAttribute('placeholder', 'Select Company');
+		$company_id->setValueOptions($co_opts);
+
+		$submit = $form->get('submit');
+		$submit->setAttribute('class', 'btn btn-primary');
+
+		$form->setAttribute('action', $this->url('securitx', [
+			'action' => 'companies',
+			'id' => $member->u_key,
+		],
+		[
+			'query' => [
+				$action => '',
+			]
+		]));
+		echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+	<?= $this->formLabel($company_id) ?>
+	<?= $this->formElement($company_id) ?>
+	<?= $this->formElementErrors()->render($company_id,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<span style="color: red; font-weight: bold">
+	</div>
+<?php
+		echo $this->formSubmit($form->get('submit'));
+		echo $this->form()->closeTag();
+		goto done;
+	} else if ($action == "edit" && $company->company_id) {
+		$short = $form->get('short');
+		$short->setValue($company->short);
+
+		$name = $form->get('name');
+		$name->setAttribute('class', 'form-control');
+		$name->setAttribute('placeholder', 'Company Name');
+		$name->setValue($company->name);
+
+		$domain = $form->get('domain');
+		$domain->setAttribute('class', 'form-control');
+		$domain->setAttribute('placeholder', 'Email Domain');
+		$domain->setValue($company->domain);
+
+		$phone = $form->get('phone');
+		$phone->setAttribute('class', 'form-control');
+		$phone->setAttribute('placeholder', 'Phone Number');
+		$phone->setValue($company->phone);
+
+		$downloads = $form->get('downloads');
+		$downloads->setAttribute('class', 'form-control');
+		$downloads->setAttribute('placeholder',
+		    'Enable Browser Downloads');
+		$downloads->setValue($company->downloads);
+
+		$submit = $form->get('submit');
+		$submit->setAttribute('class', 'btn btn-primary');
+
+		$form->setAttribute('action', $this->url('securitx', [
+			'action' => 'companies',
+			'id' => $member->u_key,
+		],
+		[
+			'query' => [
+				$action => '',
+				'id' => $company->company_id,
+			]
+		]));
+		$form->prepare();
+
+		echo $this->form()->openTag($form);
+		echo $this->formHidden($short);
+?>
+	<input type="hidden" name="company_id" value="<?=$company->company_id ?>" \>
+	<div class="form-group">
+	<?= $this->formLabel($name) ?>
+	<?= $this->formElement($name) ?>
+	<?= $this->formElementErrors()->render($name,
+	    ['class' => 'help-block']) ?>
+	</div>
+
+	<div class="form-group">
+	<?= $this->formLabel($phone) ?>
+	<?= $this->formElement($phone) ?>
+	<?= $this->formElementErrors()->render($phone,
+	    ['class' => 'help-block']) ?>
+	<p style="color: red"><?= $valid_phone ?></p>
+	</div>
+
+	<div class="form-group">
+	<?= $this->formLabel($domain) ?>
+	<?= $this->formElement($domain) ?>
+	<?= $this->formElementErrors()->render($domain,
+	    ['class' => 'help-block']) ?>
+	<p style="color: red"><?= $valid_domain ?></p>
+	</div>
+
+	<div class="form-group">
+	<?= $this->formLabel($downloads) ?> (if you plan to enable automatic file handling via other scripting, do not enable this)
+	<div class="form-group-left">
+	<?= $this->formElement($downloads) ?>
+	<?= $this->formElementErrors()->render($downloads,
+	    ['class' => 'help-block']) ?>
+	</div>
+	</div>
+
+<?php
+	echo $this->formSubmit($form->get('submit'));
+	echo $this->form()->closeTag();
 		goto done;
 	}
 	$name = $form->get('name');

@@ -5,7 +5,7 @@ use Laminas\Captcha;
 use Laminas\Form\Form;
 use Laminas\Form\Element;
 
-class CompanyForm extends Form {
+class CompanyEditForm extends Form {
 	public function __construct($name = null) {
 		parent::__construct($name);
 
@@ -14,13 +14,6 @@ class CompanyForm extends Form {
 			'type' => 'text',
 			'options' => [
 				'label' => 'Company Name',
-			],
-		]);
-		$this->add([
-			'name' => 'short',
-			'type' => 'text',
-			'options' => [
-				'label' => 'Two Letter Short Name',
 			],
 		]);
 		$this->add([
@@ -56,6 +49,13 @@ class CompanyForm extends Form {
 			'options' => [
 				'label' => 'Select Company',
 				'disable_inarray_validator' => true,
+			],
+		]);
+		$this->add([
+			'name' => 'short',
+			'type' => Element\Hidden::class,
+			'attributes' => [
+				'value' => '',
 			],
 		]);
 		$this->add([

@@ -25,6 +25,9 @@ class CompanyTable {
 		}
 		return $row;
 	}
+	public function getDomainCount($id) {
+		return $this->tableGateway->select(['domain' => $id])->count();
+	}
 	public function getShortCount($id) {
 		return $this->tableGateway->select(['short' => $id])->count();
 	}
@@ -47,11 +50,11 @@ class CompanyTable {
 		}
 
 		try {
-			$this->getMember($id);
+			$this->getCompany($id);
 		} catch (RuntimeException $e) {
 			return;
 		}
 
-		$this->tableGateway->update($data, ['id' => $id]);
+		$this->tableGateway->update($data, ['company_id' => $id]);
 	}
 }

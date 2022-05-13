@@ -163,6 +163,7 @@ ret:
 		}
 		if ($_GET) {
 			$companies = '';
+			$id = '';
 			if (array_key_exists('add', $_GET)) {
 				$form = new CompanyForm();
 				$action = "add";
@@ -170,6 +171,8 @@ ret:
 				$form = new CompanyEditForm();
 				$companies = $this->company_table->fetchAll();
 				$action = "edit";
+				if (array_key_exists('id', $_GET))
+					$id = $_GET['id'];
 			} else if (array_key_exists('delete', $_GET)) {
 				$form = new CompanyDeleteForm();
 				$companies = $this->company_table->fetchAll();
@@ -190,37 +193,95 @@ ret:
 					'valid_domain' => '',
 					'valid_phone' => '',
 					'companies' => $companies,
+					'company' => '',
 				]);
 			}
 			$company = new Company();
-			if ($action != "delete")
+			if ($action == "add")
 				$form->setInputFilter($company->getInputFilter());
-			$form->setData($request->getPost());
-			if (!$form->isValid()) {
-				return new ViewModel([
-					'member' => $member,
-					'action' => $action,
-					'exists' => '',
-					'form' => $form,
-					'completed' => false,
-					'valid_domain' => '',
-					'valid_phone' => '',
-				]);
+			if ($action == "add" || $action == "delete") {
+				$form->setData($request->getPost());
+				if (!$form->isValid()) {
+					return new ViewModel([
+						'member' => $member,
+						'action' => $action,
+						'exists' => '',
+						'form' => $form,
+						'completed' => false,
+						'valid_domain' => '',
+						'valid_phone' => '',
+					]);
+				}
+
+				$company->exchangeArray($form->getData());
+				$count = $this->company_table->getShortCount(
+					$company->short
+				);
+
+				if ($count) {
+					return new ViewModel([
+						'member' => $member,
+						'action' => $action,
+						'exists' => 'Short name already exists',
+						'form' => $form,
+						'completed' => false,
+						'valid_domain' => '',
+						'valid_phone' => '',
+					]);
+				}
+				$domain = $this->company_table->getDomainCount(
+					$company->domain
+				);
+				if ($domain) {
+					return new ViewModel([
+						'member' => $member,
+						'action' => $action,
+						'exists' => '',
+						'form' => $form,
+						'completed' => false,
+						'valid_domain' => 'Domain already exists',
+						'valid_phone' => '',
+					]);
+				}
 			}
+			if ($action == "edit" && $id) {
+				$form->setInputFilter($company->getInputFilter());
+				$form->setData($request->getPost());
+				if (!$form->isValid()) {
+					return new ViewModel([
+						'member' => $member,
+						'action' => $action,
+						'form' => $form,
+						'completed' => false,
+						'valid_domain' => '',
+						'valid_phone' => '',
+						'company' => $ce,
+					]);
+				}
 
-			$company->exchangeArray($form->getData());
-			$count = $this->company_table->getShortCount(
-			    $company->short);
-
-			if ($count) {
+				$company->exchangeArray($form->getData());
+				$this->company_table->saveCompany($company);
+				return new ViewModel([
+					'member' => $member,
+					'action' => 'edited',
+					'completed' => true,
+				]);
+			} else if ($action == "edit" && !$id) {
+				$form->setData($request->getPost());
+				$form->isValid();
+				$company->exchangeArray($form->getData());
+				$ce = $this->company_table->getCompany(
+					$company->company_id
+				);
+				$form = new CompanyEditForm();
 				return new ViewModel([
 					'member' => $member,
 					'action' => $action,
-					'exists' => 'Short name already exists',
 					'form' => $form,
 					'completed' => false,
 					'valid_domain' => '',
 					'valid_phone' => '',
+					'company' => $ce,
 				]);
 			}
 			if ($action == "delete") {
