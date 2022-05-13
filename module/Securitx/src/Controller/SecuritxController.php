@@ -12,6 +12,8 @@ use Securitx\Model\Emailer;
 use Securitx\Form\MemberForm;
 use Securitx\Form\UploaderForm;
 use Securitx\Form\CompanyForm;
+use Securitx\Form\CompanyEditForm;
+use Securitx\Form\CompanyDeleteForm;
 use Securitx\Form\ForgotForm;
 use Securitx\Form\SendForm;
 use Securitx\Form\TwofaForm;
@@ -160,18 +162,23 @@ ret:
 			);
 		}
 		if ($_GET) {
-			if (array_key_exists('add', $_GET))
+			$companies = '';
+			if (array_key_exists('add', $_GET)) {
+				$form = new CompanyForm();
 				$action = "add";
-			else if (array_key_exists('edit', $_GET))
+			} else if (array_key_exists('edit', $_GET)) {
+				$form = new CompanyEditForm();
+				$companies = $this->company_table->fetchAll();
 				$action = "edit";
-			else if (array_key_exists('delete', $_GET))
+			} else if (array_key_exists('delete', $_GET)) {
+				$form = new CompanyDeleteForm();
+				$companies = $this->company_table->fetchAll();
 				$action = "delete";
-			else
+			} else
 				goto ret;
 			$count = $this->company_table->getCount();
 			if ($count == 1 && $action == "delete")
 				goto ret;
-			$form = new CompanyForm();
 			$request = $this->getRequest();
 			if (!$request->isPost()) {
 				return new ViewModel([
@@ -182,10 +189,12 @@ ret:
 					'completed' => false,
 					'valid_domain' => '',
 					'valid_phone' => '',
+					'companies' => $companies,
 				]);
 			}
 			$company = new Company();
-			$form->setInputFilter($company->getInputFilter());
+			if ($action != "delete")
+				$form->setInputFilter($company->getInputFilter());
 			$form->setData($request->getPost());
 			if (!$form->isValid()) {
 				return new ViewModel([
@@ -214,7 +223,55 @@ ret:
 					'valid_phone' => '',
 				]);
 			}
-
+			if ($action == "delete") {
+				$cd = $this->company_table->getCompany(
+					$company->company_id
+				);
+				if ($cd == null)
+					goto ret;
+				$members = $this->member_table->getMembersByCompany(
+					$cd->company_id
+				);
+				$cfolder = realpath(getcwd()) . "/data/uploads/" .
+				    $cd->short;
+				$cdls = $this->downloads_table->getCDownloads(
+					$cd->company_id
+				);
+				foreach ($cdls as $cdl) {
+					$file = $cfolder . "/" . $cdl . ".pdf";
+					if (file_exists($file))
+						unlink($file);
+				}
+				if (is_dir($cfolder))
+					rmdir($cfolder);
+				$this->company_table->deleteCompany($cd->company_id);
+				foreach ($members as $member) {
+					$folder = realpath(getcwd()) .
+					    "/data/downloads/" . $member->u_key;
+					$dls = $this->downloads_table->getDownloads(
+						$member->u_key
+					);
+					foreach($dls as $dl) {
+						$file = $folder . "/" .
+						    $dl->id_key . ".pdf";
+						if (file_exists($file))
+							unlink($file);
+						$this->downloads_table->deleteDownload(
+							$dl->downloads_id
+						);
+					}
+					if (is_dir($folder))
+						rmdir($folder);
+					$this->member_table->deleteMember(
+						$member->id
+					);
+				}
+				return new ViewModel([
+					'member' => $member,
+					'action' => 'deleted',
+					'completed' => true,
+				]);
+			}
 			$phone_validator = new PhoneNumber([
 				'country' => 'US',
 				'allow_possible' => true,
@@ -809,7 +866,8 @@ skip:
 					ip_address TEXT,
 					twofa INTEGER,
 					twofa_moddate INTEGER,
-					phone INTEGER
+					phone INTEGER,
+					blocked INTEGER
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
 			$adapter->query('

@@ -21,13 +21,15 @@ class CompanyTable {
 		$rowset = $this->tableGateway->select(['company_id' => $id]);
 		$row = $rowset->current();
 		if (!$row) {
-			throw new RuntimeException(sprintf(
-			    'Could not find company row with id %d', $id));
+			return null;
 		}
 		return $row;
 	}
 	public function getShortCount($id) {
 		return $this->tableGateway->select(['short' => $id])->count();
+	}
+	public function deleteCompany($id) {
+		return $this->tableGateway->delete(['company_id' => $id]);
 	}
 	public function saveCompany(Company $company) {
 		$data = [

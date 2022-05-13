@@ -40,6 +40,9 @@ class DownloadsTable {
 			'company_id' =>$c_id,
 		]);
 	}
+	public function deleteDownload($id) {
+		return $this->tableGateway->delete(['downloads_id' => $id]);
+	}
 	public function saveDownload(Downloads $download) {
 		$data = [
 			'moddate' => $download->moddate,

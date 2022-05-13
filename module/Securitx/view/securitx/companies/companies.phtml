@@ -13,10 +13,63 @@
 		goto done;
 	}
 ?>
-	<p>Hello, <?= $member->first ?>.<br />Here, you can <?= $action ?> a company.</p>
+	<p>Hello, <?= $member->first ?>.<br />Here, you can <?= $action ?> a company.<br />The primary company can not be deleted.</p>
 
 	<hr class="my-4">
+
 <?php
+	if ($action == "delete") {
+		$cnt = 0;
+		$co_opts = array();
+		foreach ($companies as $company) {
+			/* we will never remove the primary company */
+			if ($cnt == 1) {
+				$co_opt = [
+					'value' => $company->company_id,
+					'label' => $this->escapeHtml($company->name),
+				];
+				array_push($co_opts, $co_opt);
+			}
+			$cnt = 1;
+		}
+		$company_id = $form->get('company_id');
+		$company_id->setAttribute('class', 'form-control');
+		$company_id->setAttribute('placeholder', 'Select Company');
+		$company_id->setValueOptions($co_opts);
+
+		$submit = $form->get('submit');
+		$submit->setAttribute('class', 'btn btn-primary');
+
+		$form->setAttribute('action', $this->url('securitx', [
+			'action' => 'companies',
+			'id' => $member->u_key,
+		],
+		[
+			'query' => [
+				$action => '',
+			]
+		]));
+		echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+	<?= $this->formLabel($company_id) ?>
+	<?= $this->formElement($company_id) ?>
+	<?= $this->formElementErrors()->render($company_id,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<div class="form-group">
+	<span style="color: red; font-weight: bold">
+	WARNING!!! Deleting a company is not reversible!<br />
+	WARNING!!! This action will delete the company and all of its files!<br />
+	WARNING!!! This action will delete all company members and their files!<br />
+	WARNING!!! Make a backup of your database and files before proceeding if you want to recover!<br />
+	WARNING!!! Pressing the 'Delete Company' button will not ask for a confirmation!</span><br/>
+	</div>
+<?php
+		echo $this->formSubmit($form->get('submit'));
+		echo $this->form()->closeTag();
+		goto done;
+	}
 	$name = $form->get('name');
 	$name->setAttribute('class', 'form-control');
 	$name->setAttribute('placeholder', 'Company Name');

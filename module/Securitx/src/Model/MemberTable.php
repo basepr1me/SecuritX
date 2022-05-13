@@ -61,6 +61,9 @@ class MemberTable {
 		$row = $rowset->current();
 		return $row;
 	}
+	public function getMembersByCompany($c_id) {
+		return $this->tableGateway->select(['company_id' => $c_id]);
+	}
 	public function saveMember(Member $member) {
 		$data = [
 			'first' => $member->first,
@@ -97,7 +100,7 @@ class MemberTable {
 
 		$this->tableGateway->update($data, ['id' => $id]);
 	}
-	public function deleteMember(SecuritX $member) {
+	public function deleteMember($id) {
 		$this->tableGateway->delete(['id' => (int)$id]);
 	}
 }
