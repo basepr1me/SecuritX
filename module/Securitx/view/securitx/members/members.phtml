@@ -23,16 +23,16 @@
 		$m_opts = array();
 		$m_count = 0;
 		$cnt = 0;
-		foreach ($members as $member) {
+		foreach ($members as $bmember) {
 			/* we'll never delete the primary user */
-			if ($member->blocked)
+			if ($bmember->blocked)
 				continue;
 			if ($cnt) {
 				$m_opt = [
-					'value' => $member->id,
+					'value' => $bmember->id,
 					'label' => $this->escapeHtml("
-						$member->first $member->last, $member->email, 
-						$member->office
+						$bmember->first $bmember->last, $bmember->email, 
+						$bmember->office
 					"),
 				];
 				array_push($m_opts, $m_opt);
