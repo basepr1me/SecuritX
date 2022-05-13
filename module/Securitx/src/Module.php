@@ -44,6 +44,16 @@ class Module implements ConfigProviderInterface {
 					$resultSetPrototype->setArrayObjectPrototype(new Model\Downloads());
 					return new TableGateway('downloads', $dbAdapter, null, $resultSetPrototype);
 				},
+				Model\BlockedDomainsTable::class => function($container) {
+					$tableGateway = $container->get(Model\BlockedDomainsTableGateway::class);
+					return new Model\BlockedDomainsTable($tableGateway);
+				},
+				Model\BlockedDomainsTableGateway::class => function ($container) {
+					$dbAdapter = $container->get(AdapterInterface::class);
+					$resultSetPrototype = new ResultSet();
+					$resultSetPrototype->setArrayObjectPrototype(new Model\BlockedDomains());
+					return new TableGateway('blockeddomains', $dbAdapter, null, $resultSetPrototype);
+				},
 			],
 		];
 	}
@@ -56,6 +66,7 @@ class Module implements ConfigProviderInterface {
 						$container->get(Model\MemberTable::class),
 						$container->get(Model\CompanyTable::class),
 						$container->get(Model\DownloadsTable::class),
+						$container->get(Model\BlockedDomainsTable::class),
 						$container->get('config')['email_host'],
 						$container->get('config')['recaptcha'],
 						$container->get('config')['hipaa'],

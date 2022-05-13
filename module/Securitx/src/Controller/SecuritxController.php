@@ -8,6 +8,8 @@ use Securitx\Model\Company;
 use Securitx\Model\DownloadsTable;
 use Securitx\Model\Downloads;
 use Securitx\Model\Emailer;
+use Securitx\Model\BlockedDomainsTable;
+use Securitx\Model\BlockedDomains;
 
 use Securitx\Form\MemberForm;
 use Securitx\Form\UploaderForm;
@@ -43,10 +45,12 @@ class SecuritxController extends AbstractActionController {
 
 	public function __construct(MemberTable $member_table,
 	    CompanyTable $company_table, DownloadsTable $downloads_table,
-	    $email_host, $recaptcha, $hipaa) {
+	    BlockedDomainsTable $blockeddomains_table, $email_host, $recaptcha,
+	    $hipaa) {
 		$this->member_table = $member_table;
 		$this->company_table = $company_table;
 		$this->downloads_table = $downloads_table;
+		$this->blockeddomains_table = $blockeddomains_table;
 		$this->email_host = $email_host;
 		$this->file = realpath(getcwd()) . "/data/securitx.db";
 		$this->recaptcha = $recaptcha;
@@ -953,6 +957,22 @@ skip:
 					downloaded INTEGER NOT NULL
 				)
 			', Adapter::QUERY_MODE_EXECUTE);
+			$adapter->query('
+				CREATE TABLE blockeddomains (
+					domain_id INTEGER PRIMARY KEY AUTOINCREMENT,
+					domain TEXT NOT NULL
+				)
+			', Adapter::QUERY_MODE_EXECUTE);
+			$adapter->query('
+				INSERT INTO blockeddomains
+					("domain")
+					values ("mailinator.com")
+			', Adapter::QUERY_MODE_EXECUTE);
+			$adapter->query('
+				INSERT INTO blockeddomains
+					("domain")
+					values ("sharklazers.com")
+			', Adapter::QUERY_MODE_EXECUTE);
 		}
 		/* setup initial company */
 		$co_added = 0;
@@ -1261,6 +1281,27 @@ skip:
 			]);
 		}
 
+		$domains = new BlockedDomains();
+		$domains = $this->blockeddomains_table->fetchAll();
+		$parts = explode('@', $member->email);
+		foreach($domains as $domain) {
+			if ($domain->domain == $parts[1]) {
+				return new ViewModel([
+					'exists' => false,
+					'form' => $form,
+					'companies' => $companies,
+					'registered' => false,
+					'valid' => 'Email addresses from this domain are prohibited',
+				]);
+			}
+		}
+				return new ViewModel([
+					'exists' => true,
+					'form' => $form,
+					'companies' => $companies,
+					'registered' => false,
+					'valid' => 'Email addresses from this domain are prohibited',
+				]);
 		$validator = new EmailAddress([
 			'allow' => Hostname::ALLOW_DNS,
 			'useMxCheck' => true,
