@@ -30,6 +30,7 @@ class Member implements InputFilterAwareInterface {
 	public $twofa;
 	public $twofa_moddate;
 	public $phone;
+	public $blocked;
 
 	private $inputFilter;
 	private $val;
@@ -54,6 +55,7 @@ class Member implements InputFilterAwareInterface {
 		$this->twofa	= !empty($data['twofa']) ? $data['twofa'] : null;
 		$this->twofa_moddate	= !empty($data['twofa_moddate']) ? $data['twofa_moddate'] : null;
 		$this->phone	= !empty($data['phone']) ? $data['phone'] : null;
+		$this->blocked	= !empty($data['blocked']) ? $data['blocked'] : null;
 	}
 
 	public function setInputFilter(InputFilterInterface $inputFilter) {

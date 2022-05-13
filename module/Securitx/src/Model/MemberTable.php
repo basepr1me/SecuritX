@@ -84,6 +84,7 @@ class MemberTable {
 			'twofa' => intval($member->twofa),
 			'twofa_moddate' => intval($member->twofa_moddate),
 			'phone' => intval($member->phone),
+			'blocked' => intval($member->blocked),
 		];
 
 		$id = (int)$member->id;

@@ -22,7 +22,7 @@ foreach ($results as $result)
 	rm_dir($downloads_path . $result['u_key']);
 
 $query = "delete from members where verified = 1 and is_admin = 0 and " .
-    "is_editor = 0 and moddate <= $thirty";
+    "is_editor = 0 and blocked != 1 and moddate <= $thirty";
 $conn->exec($query);
 
 function rm_dir($dir) {

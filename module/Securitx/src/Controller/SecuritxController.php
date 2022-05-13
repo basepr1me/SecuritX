@@ -20,6 +20,7 @@ use Securitx\Form\ForgotForm;
 use Securitx\Form\SendForm;
 use Securitx\Form\TwofaForm;
 use Securitx\Form\BlockDomainForm;
+use Securitx\Form\BlockMemberForm;
 
 use Laminas\Mvc\InjectApplicationEventInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -67,7 +68,7 @@ class SecuritxController extends AbstractActionController {
 		} catch (\InvalidArgumentException $ex) {
 			return $this->redirect()->toRoute('securitx');
 		}
-		if (!$member || !$member->verified)
+		if (!$member || !$member->verified || $member->blocked)
 			return $this->redirect()->toRoute('securitx');
 		if ((time() - $member->moddate) > 60 * 60 * 24) {
 			if ((time() - $member->twofa_moddate) > 60 * 10 ||
@@ -674,11 +675,66 @@ ret:
 			'first' => $admin->first,
 		]);
 	}
-	public function userAction() {
+	public function membersAction() {
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
 		$member = $this->getMember();
-		return new ViewModel();
+		$members = $this->member_table->fetchAll();
+		if (!$members)
+			goto ret;
+
+		if ($_GET) {
+			if (array_key_exists('block', $_GET)) {
+				$form = new BlockMemberForm();
+				$action = "block";
+			} else
+				goto ret;
+			$request = $this->getRequest();
+			if (!$request->isPost()) {
+				return new ViewModel([
+					'members' => $members,
+					'member' => $member,
+					'action' => $action,
+					'form' => $form,
+					'completed' => false,
+				]);
+			}
+
+			$form->setData($request->getPost());
+			if (!$form->isValid()) {
+				return new ViewModel([
+					'members' => $members,
+					'member' => $member,
+					'action' => $action,
+					'form' => $form,
+					'completed' => false,
+				]);
+			}
+			$data = $form->getData();
+			$dm = new Member();
+			$dm = $this->member_table->getMember($data['member_id']);
+			$dm->blocked = 1;
+			$this->member_table->saveMember($dm);
+			return new ViewModel([
+				'member' => $member,
+				'action' => $action,
+				'completed' => true,
+			]);
+		} else {
+			return $this->redirect()->toRoute('securitx',
+				array(
+					'action' => 'home',
+					'id' => $member->u_key,
+				)
+			);
+		}
+ret:
+		return $this->redirect()->toRoute('securitx',
+			array(
+				'action' => 'home',
+				'id' => $member->u_key,
+			)
+		);
 	}
 	public function cdownloadAction() {
 		if (!$this->checkAnyAdmin())

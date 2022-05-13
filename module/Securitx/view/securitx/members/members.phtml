@@ -1,0 +1,77 @@
+<?php
+	$this->headTitle('SecuritX: Manage Users');
+?>
+<div class="jumbotron">
+	<h1 class="display-4">Manage Users</h1>
+
+<?php	if ($completed) { ?>
+	<p>Hello, <?= $member->first ?>.<br />The member has been <?= $action ?>.</p>
+
+	<hr class="my-4" \>
+
+
+<?php
+		goto done;
+	}
+?>
+	<p>Hello, <?= $member->first ?>.<br />
+	Here you can <?= $action ?> a member.</p>
+
+	<hr class="my-4" \>
+<?php
+	if ($action == "block") {
+		$m_opts = array();
+		$m_count = 0;
+		$cnt = 0;
+		foreach ($members as $member) {
+			/* we'll never delete the primary user */
+			if ($member->blocked)
+				continue;
+			if ($cnt) {
+				$m_opt = [
+					'value' => $member->id,
+					'label' => $this->escapeHtml("
+						$member->first $member->last, $member->email, 
+						$member->office
+					"),
+				];
+				array_push($m_opts, $m_opt);
+				$m_count++;
+			}
+			$cnt = 1;
+		}
+		if (!$m_count) {
+			echo "There are currently no SecuritX members for you to block.<br />";
+			echo "<br /><p><a class=\"a a-pad\" href=\"/securitx/home/$member->u_key\">Go home</a></p>";
+			return;
+		}
+		sort($m_opts);
+		$submit = $form->get('submit');
+		$submit->setAttribute('class', 'btn btn-primary');
+
+		$form->prepare();
+
+		$member_id = $form->get('member_id');
+		$member_id->setAttribute('class', 'form-control');
+		$member_id->setAttribute('placeholder', 'Select Member To Receive Documents (Name, Email, Office)');
+		$member_id->setValueOptions($m_opts);
+
+		echo $this->form()->openTag($form);
+?>
+	<div class="form-group">
+	<?= $this->formLabel($member_id) ?>
+	<?= $this->formElement($member_id) ?>
+	<?= $this->formElementErrors()->render($member_id,
+	    ['class' => 'help-block']) ?>
+	</div>
+	<?= $this->formSubmit($form->get('submit')) ?>
+	<div id="progress" class="help-block">
+		<p>&nbsp;</p>
+	</div>
+<?php
+		$this->form()->closeTag();
+	}
+done:
+?>
+	<br /><p><a class="a a-pad" href="/securitx/home/<?= $member->u_key ?>">Go home</a></p>
+</div>

@@ -54,7 +54,7 @@ return [
             		'securitx/securitx/send'	=> __DIR__ . '/../view/securitx/send/send.phtml',
             		'securitx/securitx/invite'	=> __DIR__ . '/../view/securitx/invite/invite.phtml',
             		'securitx/securitx/companies'	=> __DIR__ . '/../view/securitx/companies/companies.phtml',
-            		'securitx/securitx/user'	=> __DIR__ . '/../view/securitx/user/user.phtml',
+            		'securitx/securitx/members'	=> __DIR__ . '/../view/securitx/members/members.phtml',
             		'securitx/securitx/twofa'	=> __DIR__ . '/../view/securitx/twofa/twofa.phtml',
             		'securitx/securitx/forgot'	=> __DIR__ . '/../view/securitx/forgot/forgot.phtml',
             		'securitx/securitx/blockdomain'	=> __DIR__ . '/../view/securitx/blockdomain/blockdomain.phtml',
