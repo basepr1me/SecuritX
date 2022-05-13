@@ -32,6 +32,7 @@ class Member implements InputFilterAwareInterface {
 	public $phone;
 
 	private $inputFilter;
+	private $val;
 
 	public function exchangeArray(array $data) {
 		$this->id	= !empty($data['id']) ? $data['id'] : null;
@@ -60,6 +61,10 @@ class Member implements InputFilterAwareInterface {
 		    '%s does not allow injection of an alternate input filter',
 		    __CLASS__
 		));
+	}
+
+	public function setFilter($val) {
+		$this->val = $val;
 	}
 
 	public function getInputFilter() {
@@ -109,7 +114,7 @@ class Member implements InputFilterAwareInterface {
 
 		$inputFilter->add([
 			'name' => 'office',
-			'required' => true,
+			'required' => $this->val,
 			'filters' => [
 				['name' => StripTags::class],
 				['name' => StringTrim::class],

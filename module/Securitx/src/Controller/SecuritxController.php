@@ -54,7 +54,7 @@ class SecuritxController extends AbstractActionController {
 	}
 
 	private function getMember() {
-		$member = new Member('member');
+		$member = new Member();
 		$id = $this->params()->fromRoute('id');
 
 		try {
@@ -88,7 +88,7 @@ class SecuritxController extends AbstractActionController {
 		return($member);
 	}
 	private function checkAnyAdmin() {
-		$t_member = new Member('admin');
+		$t_member = new Member();
 		if (file_exists($this->file)) {
 			if ($t_member = $this->member_table->getAnyValidAdmin())
 				return 1;
@@ -435,7 +435,8 @@ ret:
 			]);
 		}
 
-		$member = new Member('member');
+		$member = new Member();
+		$member->setFilter(false);
 		$form->setInputFilter($member->getInputFilter());
 		$form->setData($request->getPost());
 
@@ -737,7 +738,7 @@ ret:
 		]);
 
 		if ($validator->isValid($data['email'])) {
-			$member = new Member('member');
+			$member = new Member();
 			$member = $this->member_table->getMemberByEmail($data['email']);
 			$url = $this->url()->fromRoute(
 				'securitx',
@@ -1043,7 +1044,7 @@ skip:
 		}
 
 		/* setup admin member */
-		$member = new Member('member');
+		$member = new Member();
 		$member = $this->member_table->getAnyAdmin();
 		if ($member) {
 			if (!$member->verified) {
@@ -1078,7 +1079,8 @@ skip:
 				]);
 			}
 
-			$member = new Member('member');
+			$member = new Member();
+			$member->setFilter(true);
 			$form->setInputFilter($member->getInputFilter());
 			$form->setData($request->getPost());
 			if (!$form->isValid()) {
@@ -1152,7 +1154,7 @@ skip:
 
 	}
 	public function twofaAction() {
-		$member = new Member('member');
+		$member = new Member();
 		$id = $this->params()->fromRoute('id');
 
 		try {
@@ -1231,7 +1233,8 @@ skip:
 			]);
 		}
 
-		$member = new Member('member');
+		$member = new Member();
+		$member->setFilter(true);
 		$form->setInputFilter($member->getInputFilter());
 		$form->setData($request->getPost());
 
@@ -1308,7 +1311,7 @@ skip:
 		]);
 	}
 	public function verifyAction() {
-		$member = new Member('member');
+		$member = new Member();
 
 		$id = $this->params()->fromRoute('id');
 
@@ -1351,7 +1354,7 @@ skip:
 			mkdir($folder, 0755, true);
 
 		if ($member->inviter) {
-			$inviter = new Member('member');
+			$inviter = new Member();
 			try {
 				$inviter =
 				    $this->member_table->getMember(

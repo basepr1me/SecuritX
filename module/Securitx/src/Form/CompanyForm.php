@@ -20,7 +20,7 @@ class CompanyForm extends Form {
 			'name' => 'short',
 			'type' => 'text',
 			'options' => [
-				'label' => 'Two Letter Short Name',
+				'label' => 'Short Name (2-5 Letters)',
 			],
 		]);
 		$this->add([
