@@ -45,8 +45,9 @@ You will need to sign up for reCaptcha keys and edit /var/www/securitx/config/au
 # chown -R www:www /var/www/securitx/data
 
 # mkdir -p /var/www/securitx/data/tmp
+# chown www:www /var/www/securitx/data/tmp
 # chmod 1700 /var/www/tmp
-# chmod 1700 /var/www/securitx/data/tmp
+# chmod 1777 /var/www/securitx/data/tmp
 ```
 
 ## fstab
