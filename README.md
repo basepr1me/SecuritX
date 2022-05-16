@@ -56,6 +56,7 @@ Adjust sizes to your needs.
 swap /var/www/securitx/data/tmp mfs rw,nodev,nosuid,-s500M 0 0
 swap /var/www/tmp mfs rw,nodev,nosuid,-s500M 0 0
 
+# mkdir -p /var/www/securitx/data/tmp
 # mount /var/www/securitx/data/tmp
 # mount /var/www/tmp
 ```
@@ -139,6 +140,11 @@ server "securitx.localhost" {
 ```bash
 # rcctl start php##_fpm https
 ```
+
+## Setup SecuritX
+
+Log in to your new SecuritX installation to setup the database, primary company,
+and primary administrator.
 
 ## Edit cronjob
 
