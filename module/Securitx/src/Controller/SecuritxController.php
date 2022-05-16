@@ -472,7 +472,7 @@ ret:
 		if (!$this->checkAnyAdmin())
 			return $this->redirect()->toRoute('securitx');
 		$member = $this->getMember();
-		if (!$member->is_admin || !$member->is_editor) {
+		if (!$member->is_admin && !$member->is_editor) {
 			return $this->redirect()->toRoute('securitx',
 				array(
 					'action' => 'home',
