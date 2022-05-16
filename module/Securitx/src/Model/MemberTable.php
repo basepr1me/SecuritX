@@ -25,6 +25,9 @@ class MemberTable {
 	public function getAllAdmins() {
 		return $this->tableGateway->select(['is_admin' => 1]);
 	}
+	public function getCMembers($c_id) {
+		return $this->tableGateway->select(['company_id' => $c_id]);
+	}
 	public function getAnyAdmin() {
 		$rowset = $this->tableGateway->select([
 			'is_admin' => 1,

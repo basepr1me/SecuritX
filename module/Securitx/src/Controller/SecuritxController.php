@@ -603,7 +603,9 @@ ret:
 			$member =
 			$this->member_table->getMember($admin->inviter);
 			array_push($members, $member);
-		} else
+		} else if ($admin->is_editor && !$admin->is_admin)
+			$members = $this->member_table->getCMembers($admin->company_id);
+		else
 			$members = $this->member_table->fetchAll();
 		$companies = $this->company_table->fetchAll();
 		$form = new SendForm("sender", "sender");
