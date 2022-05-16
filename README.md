@@ -138,6 +138,12 @@ server "securitx.localhost" {
 # rcctl start php##_fpm https
 ```
 
+## Edit cronjob
+
+```bash
+# *       *       *       *       *       /usr/local/bin/php /var/www/securitx/scripts/process_cleanup.php
+```
+
 # Author
 
 [Tracey Emery](https://github.com/basepr1me/)
