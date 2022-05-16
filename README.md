@@ -141,7 +141,9 @@ server "securitx.localhost" {
 ## Edit cronjob
 
 ```bash
-# *       *       *       *       *       /usr/local/bin/php /var/www/securitx/scripts/process_cleanup.php
+# crontab -e
+
+* * * * * /usr/local/bin/php /var/www/securitx/scripts/process_cleanup.php
 ```
 
 # Author
