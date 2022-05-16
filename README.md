@@ -75,12 +75,19 @@ post_max_size = 500M
 max_file_uploads = 20
 extension=intl.so
 extension=pdo_sqlite.so
+
+# You may also need
+allow_url_fopen = On
 ```
 
 ### WWW shell
 
 ```bash
 # cp -p /bin/sh /var/www/bin
+# mkdir /var/www/etc
+# cp -p /etc/resolv.conf /var/www/etc
+# mkdir /var/www/etc/ssl
+# cp -p /etc/ssl/cert.pem /var/www/etc/ssl
 ```
 
 ## httpd.conf

@@ -1410,13 +1410,6 @@ skip:
 				]);
 			}
 		}
-				return new ViewModel([
-					'exists' => true,
-					'form' => $form,
-					'companies' => $companies,
-					'registered' => false,
-					'valid' => 'Email addresses from this domain are prohibited',
-				]);
 		$validator = new EmailAddress([
 			'allow' => Hostname::ALLOW_DNS,
 			'useMxCheck' => true,
