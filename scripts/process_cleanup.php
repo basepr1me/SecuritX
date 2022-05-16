@@ -10,7 +10,7 @@ $conn = new PDO('sqlite:/var/www/securitx/data/securitx.db');
 /* member cleanup */
 /* 24 hour */
 $query = "delete from members where verified = 0 and is_admin = 0 and " .
-    "is_editor = 0 moddate <= $twenty_four";
+    "is_editor = 0 and moddate <= $twenty_four";
 $conn->exec($query);
 
 /* 30 days */
