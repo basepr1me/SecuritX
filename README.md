@@ -1,7 +1,7 @@
 # SecuritX
 
 SecuritX is a simple and secure document uploader for easy sharing of protected
-health information PDFs. SecuritX is developed on OpenBSD.
+health information (PHI) PDFs. SecuritX is developed on OpenBSD.
 
 # Features
 
@@ -11,6 +11,25 @@ health information PDFs. SecuritX is developed on OpenBSD.
 * 2FA verification after 24 hours of inactivity
 * Ability to block domains and members by email address
 * Simple installation
+
+# What does this do anyway?
+
+Once installed for a company, people who wish to send the company PHI can
+request and verify an account. They can then upload PDFs to the company. If the
+member who requested an account has the same domain as the company, they are
+only given the option to request administration or editor rights.
+
+Administrators and editors of the company can download those files. This option
+can be shut off during installation of other means of file transfer are
+implemented by the installer.
+
+Administrators can send files to anyone who is a member. Editors can send files
+to members that are part of their company only.
+
+Administrators and editors can invite members. This allows administrators and
+editors to receive files directly from the person they have invited. This is a
+handy way, especially for hospices, to get paperwork signed and swapped with the
+family caregiver, POA, etc.
 
 # Installation
 
