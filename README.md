@@ -158,6 +158,15 @@ and primary administrator.
 * * * * * /usr/local/bin/php /var/www/securitx/scripts/process_cleanup.php
 ```
 
+## Updating SecuritX
+
+```bash
+# cd /var/www/got/public/SecuritX.git
+# git fetch origin main:main
+# cd /var/www/securitx
+# got up
+```
+
 # Author
 
 [Tracey Emery](https://github.com/basepr1me/)
