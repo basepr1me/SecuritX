@@ -16,6 +16,9 @@ class CompanyTable {
 	public function getCount() {
 		return $this->tableGateway->select()->count();
 	}
+	public function getCCompany($id) {
+		return $this->tableGateway->select(['company_id' => $id]);
+	}
 	public function getCompany($id) {
 		$id = (int)$id;
 		$rowset = $this->tableGateway->select(['company_id' => $id]);

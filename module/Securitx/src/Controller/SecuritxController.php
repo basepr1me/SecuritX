@@ -485,7 +485,13 @@ ret:
 		$inviter_id = $member->id;
 		$m_key = $member->u_key;
 		$form = new MemberForm('invite', $this->recaptcha);
-		$companies = $this->company_table->fetchAll();
+		if ($member->is_admin)
+			$companies = $this->company_table->fetchAll();
+		else {
+			$companies = $this->company_table->getCCompany(
+				$member->company_id
+			);
+		}
 		$request = $this->getRequest();
 
 		if (!$request->isPost()) {
