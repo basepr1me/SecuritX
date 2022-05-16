@@ -75,7 +75,7 @@ class Company implements InputFilterAwareInterface {
 					'options' => [
 						'encoding' => 'UTF-8',
 						'min' => 2,
-						'max' => 2,
+						'max' => 5,
 					],
 				],
 			],
