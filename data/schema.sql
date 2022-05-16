@@ -14,7 +14,11 @@ CREATE TABLE members (
 	inviter INTEGER,
 	r_admin INTEGER,
 	r_editor INTEGER,
-	ip_address TEXT
+	ip_address TEXT,
+	twofa INTEGER,
+	twofa_moddate INTEGER,
+	phone INTEGER,
+	blocked INTEGER
 );
 
 CREATE TABLE companies (
@@ -24,7 +28,6 @@ CREATE TABLE companies (
 	domain TEXT NOT NULL,
 	phone TEXT NOT NULL,
 	downloads INTEGER,
-	is_admin INTEGER
 );
 
 CREATE TABLE downloads (
@@ -33,5 +36,6 @@ CREATE TABLE downloads (
 	id_key UUID NOT NULL,
 	u_key UUID NOT NULL,
 	e_key UUID NOT NULL,
+	company_id INTEGER NOT NULL,
 	downloaded INTEGER
 );
