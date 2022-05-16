@@ -61,9 +61,6 @@ swap /var/www/tmp mfs rw,nodev,nosuid,-s500M 0 0
 # mount /var/www/tmp
 ```
 
-edit emailhost in config/autoload/global.php
-The src/Form/MemberForm.php document requires reCAPTCHA keys.
-
 ## PHP
 
 ```bash
