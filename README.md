@@ -1,7 +1,8 @@
 # SecuritX
 
 SecuritX is a simple and secure document uploader for easy sharing of protected
-health information (PHI) PDFs. SecuritX is developed on OpenBSD.
+health information (PHI) PDFs. SecuritX is developed on OpenBSD using the
+Laminas framework.
 
 # Features
 
