@@ -1586,10 +1586,11 @@ skip:
 				return new JsonModel(array(
 					'formData' => $data,
 					'form' => $form,
-					'id' => $admin->id,
+					'id' => $member->id,
 					'u_key' => $member->u_key,
-					'members' => $members,
-					'first' => $admin->first,
+					'first' => $member->first,
+					'company' => $company->name,
+					'short' => $company->short,
 				));
 			}
 		}
