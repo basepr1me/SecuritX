@@ -66,13 +66,7 @@ The src/Form/MemberForm.php document requires reCAPTCHA keys.
 ## PHP
 
 ```bash
-# pkg_add php
-```
-
-### WWW shell
-
-```bash
-# cp -p /bin/sh /var/www/bin
+# pkg_add php php-intl php-pdo_sqlite
 ```
 
 Adjust these settings in php-#.#.ini to your needs:
@@ -81,6 +75,14 @@ Adjust these settings in php-#.#.ini to your needs:
 upload_max_filesize = 500M
 post_max_size = 500M
 max_file_uploads = 20
+extension=intl.so
+extension=pdo_sqlite.so
+```
+
+### WWW shell
+
+```bash
+# cp -p /bin/sh /var/www/bin
 ```
 
 ## httpd.conf
