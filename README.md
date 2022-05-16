@@ -1,11 +1,9 @@
-SecuritX
---------
+# SecuritX
 
 SecuritX is a simple and secure document uploader for easy sharing of protected
 health information PDFs. SecuritX is developed on OpenBSD.
 
-Features
---------
+# Features
 
 * On-disk encryption for data at rest
 * Admins and editors can invite members for direct sharing outside of the company upload area
@@ -14,8 +12,7 @@ Features
 * Ability to block domains and members by email address
 * Simple installation
 
-Installation
-------------
+# Installation
 
 ## Clone SecuritX
 
@@ -78,7 +75,7 @@ The src/Form/MemberForm.php document requires reCAPTCHA keys.
 # cp -p /bin/sh /var/www/bin
 ```
 
-Adjust these settings in php-#-#.ini to your needs:
+Adjust these settings in php-#.#.ini to your needs:
 
 ```bash
 upload_max_filesize = 500M
@@ -141,8 +138,7 @@ server "securitx.localhost" {
 # rcctl start php##_fpm https
 ```
 
-Author
-------
+# Author
 
 [Tracey Emery](https://github.com/basepr1me/)
 
