@@ -7,6 +7,7 @@ Laminas framework.
 # Features
 
 * On-disk encryption for data at rest
+* Password free design
 * Admins and editors can invite members for direct sharing outside of the company upload area
 * Automatic member and file clean up via Cron
 * 2FA verification after 24 hours of inactivity
