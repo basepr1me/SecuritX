@@ -115,7 +115,7 @@ allow_url_fopen = On
 
 ```bash
 server "securitx.localhost" {
-	listen on $ext_if port 80
+	listen on * port 80
 
 	location "/.well-known/acme-challenge/*" {
 		root "/acme"
@@ -127,7 +127,7 @@ server "securitx.localhost" {
 }
 
 server "securitx.localhost" {
-	listen on $ext_if tls port 443
+	listen on * tls port 443
 
 	# adjust for your setup
         connection { max request body 60000000000 }
