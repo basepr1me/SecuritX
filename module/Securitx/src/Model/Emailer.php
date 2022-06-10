@@ -72,9 +72,9 @@ class Emailer {
 		$message->addFrom('no-reply@' . $this->hostname, 'SecuritX');
 		$message->addTo("$email", "$first $last");
 		$message->addReplyTo('no-reply@' . $this->hostname, 'SecuritX');
-		$message->setSubject('Your SecuritX Two Factor Authentication Code');
+		$message->setSubject('Your SecuritX Secret Authentication Code');
 		$message->setBody(
-			"Hello $first,\r\n\r\nHere is your two factor " .
+			"Hello $first,\r\n\r\nHere is your secret " .
 			"authentication code. This code expires in 10 minutes." .
 			"Thank you!\r\n\r\n$code\r\n\r\n" .
 			"--\r\n\r\n$hipaa"
