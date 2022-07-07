@@ -2,7 +2,7 @@ CREATE TABLE members (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	first TEXT NOT NULL,
 	last TEXT NOT NULL,
-	office TEXT NOT NULL,
+	office TEXT,
 	email TEXT NOT NULL,
 	v_key UUID,
 	u_key UUID,
