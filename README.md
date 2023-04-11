@@ -160,6 +160,13 @@ server "securitx.localhost" {
 
 ```
 
+## Save branch
+
+```bash
+# cd /var/www/securitx
+# got ci -m "update production"
+```
+
 ## Start daemons
 
 ```bash
