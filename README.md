@@ -196,6 +196,9 @@ and primary administrator.
 # got rb production
 ```
 
+Check the data/upgrades folder for any scripts that need to be run for your new
+version.
+
 # Author
 
 [Tracey Emery](https://github.com/basepr1me/)
