@@ -42,7 +42,6 @@ family caregiver, POA, etc.
 # got clone -a ssh://git@github.com/basepr1me/SecuritX.git
 # cd /var/www
 # got co /var/www/got/public/SecuritX.git securitx
-# got br production
 ```
 
 ## Edit global.php
@@ -161,13 +160,6 @@ server "securitx.localhost" {
 
 ```
 
-## Save branch
-
-```bash
-# cd /var/www/securitx
-# got ci -m "update production"
-```
-
 ## Start daemons
 
 ```bash
@@ -190,13 +182,11 @@ and primary administrator.
 ## Updating SecuritX
 
 ```bash
+# cd /var/www/got/public/SecuritX.git
+# git fetch origin main:main
 # cd /var/www/securitx
-# got up -b main
-# got fetch
-# got rb production
 # got up
 ```
-Then run any scripts available in data/upgrade for the version downloaded.
 
 # Author
 
