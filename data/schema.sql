@@ -17,7 +17,7 @@ CREATE TABLE members (
 	ip_address TEXT,
 	twofa INTEGER,
 	twofa_moddate INTEGER,
-	phone INTEGER,
+	phone TEXT,
 	blocked INTEGER
 );
 
