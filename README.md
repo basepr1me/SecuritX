@@ -192,7 +192,8 @@ and primary administrator.
 # cd /var/www/got/public/SecuritX.git
 # git fetch origin main:main
 # cd /var/www/securitx
-# got up
+# got up -b main
+# got rb production
 ```
 
 # Author
