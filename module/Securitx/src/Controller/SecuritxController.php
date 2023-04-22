@@ -595,13 +595,15 @@ ret:
 		$admin = $this->getMember();
 		if ($admin->inviter)
 			$invited = 1;
-		else if (!$admin->is_editor || !$admin->is_editor) {
-			return $this->redirect()->toRoute('securitx',
-				array(
-					'action' => 'home',
-					'id' => $admin->u_key,
-				)
-			);
+		else if (!$admin->is_admin) {
+		       if (!$admin->is_editor) {
+				return $this->redirect()->toRoute('securitx',
+					array(
+						'action' => 'home',
+						'id' => $admin->u_key,
+					)
+				);
+			}
 		}
 
 		if ($invited) {
